@@ -15,3 +15,4 @@ ADDI r7, 1
 SUB r6, r7
 JMPIE r5, r6
 STOP
+STOP
