@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 public class main{
     
     public static void main(String[] args) throws FileNotFoundException {
-        double[] regs = new double[8];
+        double[] regs = new double[9];
        
         String[] s, arquivo;
         label[] PC = new label[1024];
@@ -121,7 +121,7 @@ public class main{
                     
                 }
                 System.out.println("Memoria\n"); 
-                for(int n=0; n<100; n++){
+                for(int n=0; n<1024; n++){
                     System.out.println(n + " ");
                     if(PC[n]!=null){
                         System.out.println(PC[n].print());
