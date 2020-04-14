@@ -3,11 +3,11 @@ public class GerenteMemoria {
    private String[] s, arquivo;
    private int qtdProgramas;
    private Ler l;
-    CBU cbu;
+    CPU cpu;
     public GerenteMemoria(String[] str, int qtdProgramas){
         this.qtdProgramas=qtdProgramas;
         s  = str;
-        cbu =  new CBU();
+        cpu =  new CPU();
         
     }
     public void rodaProgramas(){
@@ -17,7 +17,7 @@ public class GerenteMemoria {
             limiteSup = (i+1)*128;
             l = new Ler(s[i]);
             arquivo = l.criarVetor();
-            cbu.rodaProg(arquivo, limiteInf, limiteSup);
+            cpu.rodaProg(arquivo, limiteInf, limiteSup);
         }
     }   
 }

@@ -1,11 +1,11 @@
-public class  CBU{
+public class  CPU{
     private double[] regs = new double[9];  
     private String[] s, arquivo;
     private label[] PC = new label[1024];
     private Ler l;
     private int i=0;
 
-    public CBU(){
+    public CPU(){
 
     }
     public void rodaProg(String[] arquivo ,int limiteInf, int limiteSup){
@@ -48,32 +48,37 @@ public class  CBU{
               ////////////intruction jmp
             else if(s[0].equals("JMP") ){
                 PC[i] = new label("JMP", Double.parseDouble(s[1]));
-                i = (Integer.parseInt(s[1]) - 1)+limiteInf;
+                linhaArq = (int) regs[PC[i].findRD()] - 1;
+                i = Integer.parseInt(s[1]) - 1;
             }
             ////////////intruction jmpi
             else if(s[0].equals("JMPI") ){
                 PC[i] = new label("JMPI", s[1], 0.0);
-                i = ((int) regs[PC[i].findRD()] - 1)+limiteInf;
+                linhaArq = (int) regs[PC[i].findRD()] - 1;
+                i = (int) regs[PC[i].findRD()] - 1;
             }
             ////////////intruction jmpig
             else if(s[0].equals("JMPIG") ){
                 PC[i] = new label("JMPIG", s[1], s[2]);
                 if(regs[PC[i].findRS()] > 0){
-                    i = ((int) regs[PC[i].findRD()] - 1)+limiteInf;
+                    linhaArq = (int) regs[PC[i].findRD()] - 1;
+                    i = (int) regs[PC[i].findRD()] - 1 + limiteInf;
                 }
             }
             ////////////intruction jmpil
              else if(s[0].equals("JMPIL") ){
                 PC[i] = new label("JMPIL", s[1], s[2]);
                     if(regs[PC[i].findRS()] < 0){
-                        i = ((int) regs[PC[i].findRD()] - 1)+limiteInf;
+                        linhaArq = (int) regs[PC[i].findRD()] - 1;
+                        i = (int) regs[PC[i].findRD()] - 1+ limiteInf;
                     }
             }
             ////////////intruction jmpie
             else if(s[0].equals("JMPIE") ){
                 PC[i] = new label("JMPIE", s[1], s[2]);
                     if(regs[PC[i].findRS()] == 0){
-                        i = ((int) regs[PC[i].findRD()] - 1)+limiteInf;
+                        linhaArq = (int) regs[PC[i].findRD()] - 1;
+                        i = (int) regs[PC[i].findRD()] - 1;
                     }
                   
             }           
