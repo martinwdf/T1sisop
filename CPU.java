@@ -8,6 +8,9 @@ public class  CPU{
     public CPU(){
 
     }
+    public void setPC(int n){
+        PC[n] = null;
+    }
     public void rodaProg(String[] arquivo ,int limiteInf, int limiteSup){
         i=limiteInf;
         int linhaArq=0;
@@ -49,13 +52,13 @@ public class  CPU{
             else if(s[0].equals("JMP") ){
                 PC[i] = new label("JMP", Double.parseDouble(s[1]));
                 linhaArq = (int) regs[PC[i].findRD()] - 1;
-                i = Integer.parseInt(s[1]) - 1;
+                i = Integer.parseInt(s[1]) - 1+limiteInf;
             }
             ////////////intruction jmpi
             else if(s[0].equals("JMPI") ){
                 PC[i] = new label("JMPI", s[1], 0.0);
                 linhaArq = (int) regs[PC[i].findRD()] - 1;
-                i = (int) regs[PC[i].findRD()] - 1;
+                i = (int) regs[PC[i].findRD()] - 1+limiteInf;
             }
             ////////////intruction jmpig
             else if(s[0].equals("JMPIG") ){
@@ -78,7 +81,7 @@ public class  CPU{
                 PC[i] = new label("JMPIE", s[1], s[2]);
                     if(regs[PC[i].findRS()] == 0){
                         linhaArq = (int) regs[PC[i].findRD()] - 1;
-                        i = (int) regs[PC[i].findRD()] - 1;
+                        i = (int) regs[PC[i].findRD()] - 1+limiteInf;
                     }
                   
             }           
@@ -87,7 +90,7 @@ public class  CPU{
                 s[1]=s[1].replace("[", "");
                 s[1]=s[1].replace("]", "");
                 s[1]=s[1].replace(",", "");
-                int j=Integer.parseInt(s[1]);
+                int j=Integer.parseInt(s[1])+limiteInf;
                 PC[i] = new label("STD", s[1],s[2]);
                 PC[j] = new label("DADO", regs[PC[i].findRS()]);
             }
@@ -104,7 +107,7 @@ public class  CPU{
                 s[1]=s[1].replace("]", "");
                 s[1]=s[1].replace(",", "");
                 PC[i] = new label("STX", s[1], s[2]);
-                int j = (int) regs[PC[i].findRD()];
+                int j = (int) regs[PC[i].findRD()]+limiteInf;
                 PC[j] = new label("DADO", regs[PC[i].findRS()]);
             }
             ////////////intruction ldx rd <- [rs]
@@ -112,18 +115,20 @@ public class  CPU{
                 s[2]=s[2].replace("[", "");
                 s[2]=s[2].replace("]", "");
                 PC[i] = new label("LDX", s[1], s[2]);
-                int j = (int) regs[PC[i].findRS()];
+                int j = (int) regs[PC[i].findRS()]+limiteInf;
                 regs[PC[i].findRD()] = PC[j].getParametro();
     
             }
             ////////////intruction stop
             else{
+            //////////// imprime os registradores
                 System.out.println("Fim do Programa");
                 System.out.println("Registradores\n"); 
                 for(int n=0; n<8; n++){
                     System.out.println(n + ": " + regs[n]); 
                     
                 }
+            //////////// imprime a memoria
                 System.out.println("Memoria\n"); 
                 for(int n=limiteInf; n<limiteSup; n++){
                     System.out.println(n + " ");
