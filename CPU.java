@@ -1,19 +1,40 @@
 public class  CPU{
-    private double[] regs = new double[9];  
-    private String[] s, arquivo;
+    private double[] regs = new double[8];  
+    private String[] s;
     private label[] PC = new label[1024];
-    private Ler l;
+    
     private int i=0;
 
     public CPU(){
 
     }
-    public void setPC(int n){
+    public void desalocaPC(int n){
         PC[n] = null;
     }
-    public void rodaProg(String[] arquivo ,int limiteInf, int limiteSup){
-        i=limiteInf;
-        int linhaArq=0;
+    public void setPC(label[] l){
+        PC = l;
+    }
+    public void setRegs(double[] regs){
+        this.regs=regs;
+    }
+    public label[] getPC(){
+        return PC;
+
+    }
+    public double[] getRegs(){ return regs;}
+
+    public boolean acabouArquivo(String[] arquivo , int tamanho){
+        if(arquivo.length >= tamanho){
+            return true;
+        }
+        return false;
+    }
+
+    public void rodaProg(String[] arquivo ,int limiteInf, int limiteSup, int rodou){
+        int linhaArq;
+        int numero=8;
+        linhaArq = rodou*8;
+        i=limiteInf+(rodou*8);
         do {
             
             s = arquivo[linhaArq].split(" ");
@@ -141,7 +162,8 @@ public class  CPU{
                i=-5;
             }
             i++; 
+            numero--;
             linhaArq++;
-        }while(i>=limiteInf && i<=limiteSup);
+        }while((i>=limiteInf && i<=limiteSup) || numero>0 );
     }
 }
