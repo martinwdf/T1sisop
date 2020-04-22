@@ -30,7 +30,7 @@ public class  CPU{
         return false;
     }
 
-    public void rodaProg(String[] arquivo ,int limiteInf, int limiteSup, int rodou){
+    public boolean rodaProg(String[] arquivo ,int limiteInf, int limiteSup, int rodou){
         int linhaArq;
         int numero=8;
         linhaArq = rodou*8;
@@ -142,28 +142,28 @@ public class  CPU{
             }
             ////////////intruction stop
             else{
-            //////////// imprime os registradores
-                System.out.println("Fim do Programa");
-                System.out.println("Registradores\n"); 
-                for(int n=0; n<8; n++){
-                    System.out.println(n + ": " + regs[n]); 
+                return true;
+        
                     
                 }
-            //////////// imprime a memoria
-                System.out.println("Memoria\n"); 
-                for(int n=limiteInf; n<limiteSup; n++){
-                    System.out.println(n + " ");
-                    if(PC[n]!=null){
-                        System.out.println(PC[n].print());
-                    }
-                    
-                }
-    
-               i=-5;
-            }
+            
             i++; 
             numero--;
             linhaArq++;
         }while((i>=limiteInf && i<=limiteSup) || numero>0 );
+        return false;
     }
+    public void printMemoria(){
+        for(int i=0;i<256;i++){
+            System.out.println(i+ " ");
+            if(PC[i]!=null){
+            System.out.println(PC[i].print());
+            }
+
+        }
+        for(int n=0;n<8; n++ ){
+            System.out.println("r"+ n + " " +regs[n]);
+    }
+}
+  
 }

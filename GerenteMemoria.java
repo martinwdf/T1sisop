@@ -12,15 +12,6 @@ public class GerenteMemoria {
         }
 
     }
-
-    public void rodaProgramas() {
-        /*
-         * for(int i=0;i<qtdProgramas;i++){ limiteInf = i*128; limiteSup = (i+1)*128; l
-         * = new Ler(s[i]); arquivo = l.criarVetor(); cpu.rodaProg(arquivo, limiteInf,
-         * limiteSup); }
-         */
-    }
-
     public int alocar(int ID){
         int aux=-1;
        
