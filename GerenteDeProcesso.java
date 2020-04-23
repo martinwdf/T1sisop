@@ -30,7 +30,7 @@ public class GerenteDeProcesso {
         pcb = new PCB(this.criaID());
         pcb.setLimiteSup(grtMemoria.alocar(pcb.getID())-1);
         pcb.setLimiteInf(pcb.getLimiteSup()-127);
-        cpu.rodaProg(arquivo, pcb.getLimiteSup()-127, pcb.getLimiteSup()-1, pcb.getRodou());
+        cpu.rodaProg(arquivo, pcb.getLimiteSup()-127, pcb.getLimiteSup()-1, 0);
         pcb.setRodou();
         this.cpu_pcb(pcb);
         processos.add(pcb);
@@ -81,6 +81,7 @@ public class GerenteDeProcesso {
                     head.setEstado(Estado.AGUARDANDO);
 
                     //adiciona o processo recem rodado para o final da fila
+                    head.setRodou();
                     processos.add(head);
                     //remove o processo do comeco da fila
                     processos.remove();
