@@ -1,6 +1,4 @@
 import java.io.*;
-import java.util.*;
-import javax.swing.*;
 
 public class Ler {
     private String nome;
@@ -30,6 +28,4 @@ public class Ler {
         return null; // só retorna null se der algum erro
     }
 
-
-    
-} 
+}
