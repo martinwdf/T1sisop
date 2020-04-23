@@ -4,23 +4,23 @@ public class PCB {
     private final int ID;
     private Estado estado;
     private int limiteInf, limiteSup;
-    private int rodou;
+    private int linhaArq;
 
     public PCB(final int ID) {
         this.ID = ID;
         this.estado = Estado.PRONTO;
         this.regs = new double[8];
-        this.PC = new label[128];
-        this.rodou = 0;
+        this.PC = new label[1024];
+        this.setLinhaArq(0);
 
     }
 
-    public int getRodou() {
-        return rodou;
+    public int getLinhaArq() {
+        return linhaArq;
     }
 
-    public void setRodou() {
-        rodou++;
+    public void setLinhaArq(int linhaArq) {
+        this.linhaArq = linhaArq;
     }
 
     public int getLimiteSup() {

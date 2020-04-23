@@ -26,6 +26,7 @@ public class CPU {
     public double[] getRegs() {
         return regs;
     }
+    public int getI(){ return i;}
 
     public boolean acabouArquivo(String[] arquivo, int tamanho) {
         if (arquivo.length >= tamanho) {
@@ -34,11 +35,10 @@ public class CPU {
         return false;
     }
 
-    public boolean rodaProg(String[] arquivo, int limiteInf, int limiteSup, int rodou) {
-        int linhaArq;
-        int numero = 8;
-        linhaArq = rodou * 8;
-        i = limiteInf + (rodou * 8);
+    public boolean rodaProg(String[] arquivo, int limiteInf, int limiteSup, int linhaArq) {
+      
+        int numero = 0;
+        i = limiteInf+linhaArq;
         do {
 
             s = arquivo[linhaArq].split(" ");
@@ -100,7 +100,7 @@ public class CPU {
                     linhaArq = (int) regs[PC[i].findRD()] - 1;
                     i = (int) regs[PC[i].findRD()] - 1 + limiteInf;
                 }
-                System.out.println(PC[i].print() + " Linha: " + i);
+            //    System.out.println(PC[i].print() + " Linha: " + i);
             }
             //////////// intruction jmpil
             else if (s[0].equals("JMPIL")) {
@@ -169,19 +169,20 @@ public class CPU {
             }
 
             i++;
-            numero--;
+            numero++;
             linhaArq++;
-        } while ((i >= limiteInf && i <= limiteSup) || numero > 0);
+        } while ((i >= limiteInf && i < limiteSup) && numero <8);
+        System.out.println("VALOR DE linha do arquivo: " +linhaArq);
         return false;
     }
 
     public void printMemoria() {
-        // for (int i = 0; i < 256; i++) {
-        // System.out.println(i + " ");
-        // if (PC[i] != null) {
-        // System.out.println(PC[i].print());
-        // }
-        // }
+         for (int i = 0; i < 256; i++) {
+         System.out.println(i + " ");
+         if (PC[i] != null) {
+        System.out.println(PC[i].print());
+         }
+         }
         for (int n = 0; n < 8; n++) {
             System.out.println("r" + n + " " + regs[n]);
         }

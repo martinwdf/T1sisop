@@ -29,17 +29,10 @@ public class GerenteDeProcesso {
 
     public void criaProcesso(String[] arquivo) {
         pcb = new PCB(this.criaID());
-<<<<<<< HEAD
         pcb.setLimiteSup(grtMemoria.alocar(pcb.getID())-1);
         pcb.setLimiteInf(pcb.getLimiteSup()-127);
-        cpu.rodaProg(arquivo, pcb.getLimiteSup()-127, pcb.getLimiteSup()-1, 0);
-=======
-        pcb.setLimiteSup(grtMemoria.alocar(pcb.getID()) - 1);
-        pcb.setLimiteInf(pcb.getLimiteSup() - 127);
-        cpu.rodaProg(arquivo, pcb.getLimiteSup() - 127, pcb.getLimiteSup() - 1, pcb.getRodou());
->>>>>>> f0ad44ad900f990a6bd3c47837486ba24caf5c49
-        pcb.setRodou();
-        this.cpu_pcb(pcb);
+       // cpu.rodaProg(arquivo, pcb.getLimiteSup()-127, pcb.getLimiteSup()-1, 0);
+       // this.cpu_pcb(pcb);
         processos.add(pcb);
     }
 
@@ -49,14 +42,16 @@ public class GerenteDeProcesso {
         return pcb;
     }
 
-    public void pcb_cpu() {
+    public PCB pcb_cpu() {
         PCB pcb = processos.element();
         cpu.setPC(pcb.getPC());
         cpu.setRegs(pcb.getRegs());
         pcb.setEstado(Estado.EXECUTADANDO);
+        return pcb;
     }
 
     public void cpu_pcb(PCB pcb) {
+        pcb.setLinhaArq(cpu.getI());
         pcb.setPC(cpu.getPC());
         pcb.setRegs(cpu.getRegs());
         pcb.setEstado(Estado.AGUARDANDO);
@@ -72,26 +67,21 @@ public class GerenteDeProcesso {
 
         while (processos.size() != 0) {
             //// vai passar a cpu do primero pcb
-            this.pcb_cpu();
-            PCB head = processos.element();
+            PCB head = this.pcb_cpu();;
             // pega o arquivo que o processo leu, para mandar para a cpu
+            
             l = new Ler(s[head.getID()]);
             arquivo = l.criarVetor();
-
             // roda a cpu que estava no 1 pcb da fila, se retornar true eh pq o processo
             // acabou
-            if (cpu.rodaProg(arquivo, pcb.getLimiteSup() - 127, pcb.getLimiteSup() - 1, pcb.getRodou()) == true) {
+            System.out.println("VALOR DO ID:"+head.getID());
+            if (cpu.rodaProg(arquivo, head.getLimiteSup() - 127, head.getLimiteSup() - 1, head.getLinhaArq()) == true) {
                 head.setEstado(Estado.FINALIZADO);
                 processos.remove(head);
             } else {
+                this.cpu_pcb(head);
                 // caso em que o processo ainda nao foi finalizado.
                 head.setEstado(Estado.AGUARDANDO);
-                    //adiciona o processo recem rodado para o final da fila
-                    head.setRodou();
-                    processos.add(head);
-                    //remove o processo do comeco da fila
-                    processos.remove();
-            
                 // adiciona o processo recem rodado para o final da fila
                 processos.add(head);
                 // remove o processo do comeco da fila
