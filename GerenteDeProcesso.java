@@ -31,8 +31,8 @@ public class GerenteDeProcesso {
         pcb = new PCB(this.criaID());
         pcb.setLimiteSup(grtMemoria.alocar(pcb.getID())-1);
         pcb.setLimiteInf(pcb.getLimiteSup()-127);
-       // cpu.rodaProg(arquivo, pcb.getLimiteSup()-127, pcb.getLimiteSup()-1, 0);
-       // this.cpu_pcb(pcb);
+        //cpu.rodaProg(arquivo, pcb.getLimiteSup()-127, pcb.getLimiteSup()-1, 0);
+        //this.cpu_pcb(pcb);
         processos.add(pcb);
     }
 
@@ -67,7 +67,7 @@ public class GerenteDeProcesso {
 
         while (processos.size() != 0) {
             //// vai passar a cpu do primero pcb
-            PCB head = this.pcb_cpu();;
+            PCB head = this.pcb_cpu();
             // pega o arquivo que o processo leu, para mandar para a cpu
             
             l = new Ler(s[head.getID()]);

@@ -39,6 +39,8 @@ public class CPU {
       
         int numero = 0;
         i = limiteInf+linhaArq;
+        System.out.println("VALOR DE linha do arquivo: " +linhaArq);
+   
         do {
 
             s = arquivo[linhaArq].split(" ");
@@ -172,12 +174,12 @@ public class CPU {
             numero++;
             linhaArq++;
         } while ((i >= limiteInf && i < limiteSup) && numero <8);
-        System.out.println("VALOR DE linha do arquivo: " +linhaArq);
+        i-=limiteInf;
         return false;
     }
 
     public void printMemoria() {
-         for (int i = 0; i < 256; i++) {
+         for (int i = 0; i < 1024; i++) {
          System.out.println(i + " ");
          if (PC[i] != null) {
         System.out.println(PC[i].print());
