@@ -4,7 +4,6 @@ public class label {
     private String[] reg = { "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8" };
     private String rd;
     private String rs;
-
     private double parametro;
 
     /////////////////// contructors methods
@@ -24,54 +23,74 @@ public class label {
         this.opcode = opcode;
         this.setParametro(d);
     }
-    
- /////////////////// getters and setters
 
-    public String getRd() {return rd;}
-    public void setRd(String rd) {this.rd = rd;}
-    public String getRs() {return rs;}
-    public void setRs(String rs) {this.rs = rs;}
-    public double getParametro() {return parametro;}
+    /////////////////// getters and setters
 
-    public void setParametro(double parametro) {this.parametro = parametro;}
- 
-    public String[] getReg() {return reg;}
-    public void setReg(String[] reg) {this.reg = reg;}
-    public String getOpcode() {return opcode;}
-/////////////////////
-    public  void printOpcode() {
+    public String getRd() {
+        return rd;
+    }
+    public void setRd(String rd) {
+        this.rd = rd;
+    }
+
+    public String getRs() {
+        return rs;
+    }
+    public void setRs(String rs) {
+        this.rs = rs;
+    }
+
+    public double getParametro() {
+        return parametro;
+    }
+    public void setParametro(double parametro) {
+        this.parametro = parametro;
+    }
+
+    public String[] getReg() {
+        return reg;
+    }
+    public void setReg(String[] reg) {
+        this.reg = reg;
+    }
+
+    public String getOpcode() {
+        return opcode;
+    }
+
+    /////////////////////
+    public void printOpcode() {
         System.out.println(opcode);
-        }
-    public int findRD(){
-        int i=0, j=0;
-        while(i<10){
-           if( getRd().contains(getReg()[j])){
-            i=10;
-           }
+    }
+
+    public int findRD() {
+        int i = 0, j = 0;
+        while (i < 10) {
+            if (getRd().contains(getReg()[j])) {
+                i = 10;
+            }
             j++;
             i++;
         }
-        return j-1;
-
+        return j - 1;
     }
 
-    public int findRS(){
-       int i=0, j=0;
-      while(i<10){
-        if( getRs().contains(getReg()[j])){
-            i=10;
-           }
-        j++;
-        i++;
-         }
-    return j-1;
-
-    }
-    public String print(){
-        if(getOpcode()== "DADO"){
-            return (getOpcode() + " " + getParametro());
+    public int findRS() {
+        int i = 0, j = 0;
+        while (i < 10) {
+            if (getRs().contains(getReg()[j])) {
+                i = 10;
+            }
+            j++;
+            i++;
         }
-        else  return getOpcode();
+        return j - 1;
+    }
+
+    public String print() {
+        if (getOpcode() == "DADO") {
+            return (getOpcode() + " " + getParametro());
+        } else
+            return getOpcode();
     }
 }
-

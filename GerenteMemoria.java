@@ -7,7 +7,6 @@ public class GerenteMemoria {
         for (int i = 0; i < 8; i++) {
             b[i] = -1;
         }
-
     }
 
     public int alocar(int ID) {
@@ -33,9 +32,7 @@ public class GerenteMemoria {
 
     public void Desaloca(int limiteSup) {
         for (int i = limiteSup - 127; i < limiteSup; i++) {
-            cpu.desalocaPC(i);
+            cpu.desalocaMemoria(i);
         }
-
     }
-
 }
