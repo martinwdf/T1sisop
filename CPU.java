@@ -149,15 +149,22 @@ public class CPU {
                 int j = Integer.parseInt(s[1]) + limiteInf;
                 memoria[i] = new label("STD", s[1], s[2]);
                 memoria[j] = new label("DADO", regs[memoria[i].findRS()]);
+
                // System.out.println(memoria[i].print() + " Linha: " + i);
-            }
+
+                System.out.println(memoria[i].print() + " Linha: " + i);
+                        }
             //////////// intruction ldd
             else if (s[0].equals("LDD")) {
                 s[2] = s[2].replace("[", "");
                 s[2] = s[2].replace("]", "");
                 memoria[i] = new label("LDD", s[1], s[2]);
                 regs[memoria[i].findRD()] = memoria[Integer.parseInt(s[2]) + limiteInf].getParametro();
+
                 //System.out.println(regs[memoria[i].findRD()]);
+
+                System.out.println(regs[memoria[i].findRD()]);
+
             }
             //////////// intruction stdx
             else if (s[0].equals("STX")) {
@@ -177,6 +184,8 @@ public class CPU {
                 int j = (int) regs[memoria[i].findRS()] + limiteInf;
                 regs[memoria[i].findRD()] = memoria[j].getParametro();
                // System.out.println("LDX | " + " REGS: " + memoria[i].findRD() + " " + regs[memoria[i].findRD()]);
+
+                System.out.println("LDX | " + " REGS: " + memoria[i].findRD() + " " + regs[memoria[i].findRD()]);
             }
             //////////// intruction stop
             else {
