@@ -70,11 +70,10 @@ public class GerenteDeProcesso {
             arquivo = l.criarVetor();
             // roda a cpu que estava no 1 pcb da fila, se retornar true eh pq o processo
             // acabou
-<<<<<<< HEAD
+
            // System.out.println("VALOR DO ID:" + head.getID());
-=======
+
             System.out.println("VALOR DO ID:" + head.getID());
->>>>>>> 410490c58949060c788d22317b054ac926f6f602
             if (cpu.rodaProg(arquivo, head.getLimiteSup() - 127, head.getLimiteSup() - 1, head.getLinhaArq()) == true) {
                 head.setEstado(Estado.FINALIZADO);
                 processos.remove(head);
