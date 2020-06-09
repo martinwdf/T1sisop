@@ -16,7 +16,7 @@ public class Shell extends Thread {
 
     @Override
     public void run() {
-        while (true) {
+        while(true){ 
             try {
                 sem.acquire();
             } catch (InterruptedException e) {
@@ -30,6 +30,7 @@ public class Shell extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            ger.controlaProcessos();
             sem.release();
         }
     }
