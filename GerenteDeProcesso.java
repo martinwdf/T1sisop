@@ -11,6 +11,7 @@ public class GerenteDeProcesso {
     private Queue<PCB> processos;
     private PCB pcb;
     private GerenteMemoria grtMemoria;
+    private int size;
 
     public GerenteDeProcesso(String[] str, int qtdOProgramas) {
         s = str;
@@ -21,23 +22,39 @@ public class GerenteDeProcesso {
         this.ID = -1;
 
         // adiciona a quantidade de processos de acordo com o numero de programas
-        for (int i = 0; i < qtdProgramas; i++) {
+      /*  for (int i = 0; i < qtdProgramas; i++) {
             l = new Ler(s[i]);
             arquivo = l.criarVetor();
             this.criaProcesso(arquivo);
         }
+        */
     }
+    public void addProcesso(String nomeArquivo){
+        criaProcesso(nomeArquivo);
+    }
+    public int getSize() {return processos.size();}
 
     public int criaID() {
         ID++;
         return ID;
     }
 
-    public void criaProcesso(String[] arquivo) {
-        pcb = new PCB(this.criaID());
+    public void criaProcesso(String arquivo) {
+        if(processos.size()==0){
+            grtMemoria.primeiroLivre();
+            pcb = new PCB(0, arquivo);
+            pcb.setNomeArquivo(arquivo);
+            pcb.setLimiteSup(grtMemoria.alocar(0));
+            pcb.setLimiteInf(pcb.getLimiteSup() - 127);
+            processos.add(pcb);
+        }
+        else{ 
+        
+        pcb = new PCB(grtMemoria.primeiroLivre(), arquivo);
         pcb.setLimiteSup(grtMemoria.alocar(pcb.getID()) - 1);
         pcb.setLimiteInf(pcb.getLimiteSup() - 127);
         processos.add(pcb);
+        }
     }
 
     public PCB removeProcesso() {
@@ -66,7 +83,7 @@ public class GerenteDeProcesso {
             //// vai passar a cpu do primero pcb
             PCB head = this.pcb_cpu();
             // pega o arquivo que o processo leu, para mandar para a cpu
-            l = new Ler(s[head.getID()]);
+            l = new Ler(head.getNomeArquivo());
             arquivo = l.criarVetor();
             // roda a cpu que estava no 1 pcb da fila, se retornar true eh pq o processo
             // acabou

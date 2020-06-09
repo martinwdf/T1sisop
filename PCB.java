@@ -5,13 +5,22 @@ public class PCB {
     private Estado estado;
     private int limiteInf, limiteSup;
     private int linhaArq;
+    private String nomeArquivo;
 
-    public PCB(final int ID) {
+    public PCB(final int ID, String nomeArquivo) {
         this.ID = ID;
         this.estado = Estado.PRONTO;
         this.regs = new double[8];
         this.setLinhaArq(0);
+        setNomeArquivo(nomeArquivo);
+    }
 
+    public String getNomeArquivo() {
+        return nomeArquivo;
+    }
+
+    public void setNomeArquivo(String nomeArquivo) {
+        this.nomeArquivo = nomeArquivo;
     }
 
     public int getLinhaArq() {
