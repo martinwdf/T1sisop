@@ -7,7 +7,7 @@ public class Ler {
 
     // O contrutor deve ter o mesmo nome da Classe
     public Ler(String nomeArquivo) {
-        nome = nomeArquivo;
+        nome =nomeArquivo;
     }
 
     // método que retorna o vetor contendo as informações do arquivo
@@ -15,6 +15,7 @@ public class Ler {
         try {
             File arq = new File(nome);
             objeto = new RandomAccessFile(arq, "rw");
+            System.out.println(objeto.length());
             sai = new String[(int) objeto.length()]; // inicializa o vetor com o tamanho do arquivo
             for (int i = 0; i < objeto.length(); i++) {
                 sai[i] = objeto.readLine();
