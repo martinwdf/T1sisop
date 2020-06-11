@@ -1,4 +1,5 @@
 package controllers;
+import models.label;
 public class CPU {
     private double[] regs = new double[8];
     private String[] s;
