@@ -9,7 +9,19 @@ public class FilaDeProntos {
         prontos = new LinkedList<PCB>();
     }
     public boolean addPronto(PCB pcb){
+        if(this.getSize()>=8){
+            return false;
+        }
         return prontos.add(pcb);
     }
-
+    public boolean removePronto(){
+        if(prontos.isEmpty()){
+            return false;
+        }
+        else{
+            prontos.remove();
+            return true;
+        }
+    }
+    public int getSize(){return prontos.size();}
 }

@@ -25,11 +25,12 @@ public class Shell extends Thread {
             System.out.println("Escreva o nome do processo que deseja adiconar");
             nomeArquivo=scan.nextLine();
             ger.addProcesso(nomeArquivo);
-            try {
-                Thread.sleep(500);
+ /*           try {
+            Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+*/
             ger.controlaProcessos();
             sem.release();
         }

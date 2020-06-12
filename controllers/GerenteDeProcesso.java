@@ -77,7 +77,7 @@ public class GerenteDeProcesso {
     }
 
     public void controlaProcessos() {
-        while (processos.size() != 0) {
+
             //// vai passar a cpu do primero pcb
             PCB head = this.pcb_cpu();
             // pega o arquivo que o processo leu, para mandar para a cpu
@@ -101,8 +101,6 @@ public class GerenteDeProcesso {
                 // remove o processo do comeco da fila
                 processos.remove();
             }
-
-        }
         cpu.printMemoria();
     }
 }

@@ -1,5 +1,6 @@
 package models;
-public class label {
+
+public class Label {
 
     private final String opcode;
     private String[] reg = { "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8" };
@@ -8,19 +9,19 @@ public class label {
     private double parametro;
 
     /////////////////// contructors methods
-    public label(String opcode, String rd, String rs) { // r2 type instructions
+    public Label(String opcode, String rd, String rs) { // r2 type instructions
         this.opcode = opcode;
         this.setRd(rd);
         this.setRs(rs);
     }
 
-    public label(String opcode, String rd, double parametro) { // i type instrucitons
+    public Label(String opcode, String rd, double parametro) { // i type instrucitons
         this.opcode = opcode;
         this.rd = rd;
         this.setParametro(parametro);
     }
 
-    public label(String opcode, double d) { // jump type instructions and the instruction stop
+    public Label(String opcode, double d) { // jump type instructions and the instruction stop
         this.opcode = opcode;
         this.setParametro(d);
     }
