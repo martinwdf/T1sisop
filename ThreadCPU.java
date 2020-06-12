@@ -1,20 +1,23 @@
-public class CPU extends Thread {
+public class ThreadCPU extends Thread {
+    // private CPU cpu;
+
     private double[] regs;
     private String[] s;
     private label[] memoria;
     private int pc;
     private int i = 0;
 
-    public CPU() {
+    public ThreadCPU() {
+        // cpu = new CPU();
         regs = new double[8];
         memoria = new label[1024];
         start();
+        new Thread(this).start();
     }
 
     public void run() {
         try {
             Thread.sleep(1000);
-            System.out.println("Executando CPU");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -204,12 +207,11 @@ public class CPU extends Thread {
         return false;
     }
 
-    // recolocar println
     public synchronized void printMemoria() {
         for (int i = 0; i < 1024; i++) {
-            System.out.print(i + " ");
+            System.out.println(i + " ");
             if (memoria[i] != null) {
-                System.out.print(memoria[i].print());
+                System.out.println(memoria[i].print());
             }
         }
     }
