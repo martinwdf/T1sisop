@@ -6,6 +6,7 @@ import models.Label;
 public class CPU extends Thread {
     private Semaphore semeCPU;
     // private Semaphore semeTimer;
+    
 
     private double[] regs;
     private String[] s;

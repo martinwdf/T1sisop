@@ -12,12 +12,14 @@ public class GerenteDeProcesso {
     private Queue<PCB> processos;
     private PCB pcb;
     private GerenteMemoria grtMemoria;
+    private FilaDeProntos prontos;
 
-    public GerenteDeProcesso(String[] str, int qtdOProgramas) {
+    public GerenteDeProcesso() {
         processos = new LinkedList<PCB>();
         cpu = new CPU();
         grtMemoria = new GerenteMemoria();
         this.ID = -1;
+        prontos = new FilaDeProntos();
 
         // adiciona a quantidade de processos de acordo com o numero de programas
         /*
@@ -46,18 +48,21 @@ public class GerenteDeProcesso {
             pcb.setNomeArquivo(arquivo);
             pcb.setLimiteSup(grtMemoria.alocar(0));
             pcb.setLimiteInf(pcb.getLimiteSup() - 127);
+          //  prontos.addPronto(pcb);
             processos.add(pcb);
         } else {
 
             pcb = new PCB(grtMemoria.primeiroLivre(), arquivo);
             pcb.setLimiteSup(grtMemoria.alocar(pcb.getID()) - 1);
             pcb.setLimiteInf(pcb.getLimiteSup() - 127);
+         //   prontos.addPronto(pcb);
             processos.add(pcb);
         }
     }
 
     public PCB removeProcesso() {
         PCB pcb1 = processos.remove();
+       // prontos.removePronto();
         grtMemoria.Desaloca(pcb1.getLimiteSup());
         return pcb;
     }

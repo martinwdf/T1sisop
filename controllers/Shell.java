@@ -13,9 +13,10 @@ public class Shell extends Thread {
     public Shell() {
         sem = new Semaphore(1);
         scan = new Scanner(System.in);
-        ger = new GerenteDeProcesso(programa, 2);
+        ger = new GerenteDeProcesso();
     }
 
+    //Solicita processos para o usuario infinatamente
     @Override
     public void run() {
         while (true) {

@@ -24,4 +24,8 @@ public class FilaDeProntos {
         }
     }
     public int getSize(){return prontos.size();}
+    public PCB getHead(){return prontos.peek();}
+    public boolean isEmpty(){
+        return prontos.isEmpty();
+    }
 }
