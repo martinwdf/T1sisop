@@ -2,38 +2,44 @@ package controllers;
 
 import java.util.concurrent.Semaphore;
 import models.Label;
+import models.Memoria;
+import models.PCB;
 
 public class CPU extends Thread {
-    private Semaphore semeCPU;
+    private Semaphore semaCPU;
     // private Semaphore semeTimer;
-    
+   // private Semaphore sema
 
     private double[] regs;
     private String[] s;
-    private Label[] memoria;
+    //private Label[] memoria;
     private int pc;
     // flag: DivZero = 1 - EndFormaLimite = 2 - STOP = 3 - TRAp = 4
     private int flag;
     private int i;
     boolean actived;
+    private Label[] memoria;
+    private PCB pcb;
+    private RotTimer rot;
 
-    public CPU() {
+    public CPU(Memoria memoria, Semaphore semaCPU, RotTimer rot) {
 
         this.regs = new double[8];
-        this.memoria = new Label[1024];
+        this.memoria = memoria.getMemoria();
         this.pc = 0;
         this.flag = 0;
         this.i = 0;
         this.actived = true;
-        start();
+        this.rot = rot;
+        this.semaCPU = semaCPU;
     }
 
     ////////////////////////////////////////////////////////////
     @Override
     public void run() {
         while (actived) {
-            try {
-                semeCPU.acquire();
+          /*  try {
+                semaCPU.acquire();
                 // semeCPU.wait();
                 // semeTimer.signal();
                 // Thread.sleep(5000);
@@ -41,8 +47,8 @@ public class CPU extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-            if (flag == 1) {
+            */
+       /*     if (flag == 1) {
                 System.out.println("no Run() DivZero = 1");
                 // tratamento
                 flag = 0;
@@ -62,8 +68,17 @@ public class CPU extends Thread {
                 // tratamento
                 flag = 0;
             }
+            */
 
-            semeCPU.release();
+
+            if(rodaProg(getPCB())){
+                //rotina de tratamento
+            }
+            if(!rodaProg(getPCB()))
+            {
+               rot.tratamento(getPCB());
+            }
+            semaCPU.release();
         }
     }
 
@@ -88,6 +103,16 @@ public class CPU extends Thread {
         this.regs = regs;
     }
 
+    public synchronized void setPCB(PCB pcb){
+        this.pcb = pcb;
+    }
+    public synchronized void salvaContexto(PCB pcb){
+        setRegs(pcb.getRegs());
+        setPc(pcb.getPC());
+        setPCB(pcb);
+    }
+    public synchronized PCB getPCB(){return pcb;}
+
     public synchronized double[] getRegs() {
         return regs;
     }
@@ -107,8 +132,11 @@ public class CPU extends Thread {
         return false;
     }
 
-    public synchronized boolean rodaProg(String[] arquivo, int limiteInf, int limiteSup, int linhaArq) {
-
+    public synchronized boolean rodaProg(PCB pcb) {
+        String[] arquivo =pcb.getArquivo();
+        int limiteSup = pcb.getLimiteSup();
+        int limiteInf = pcb.getLimiteInf();
+        int linhaArq = pcb.getLinhaArq();
         int numero = 0;
         i = limiteInf + linhaArq;
         // System.out.println("VALOR DE linha do arquivo: " + linhaArq);
@@ -259,7 +287,7 @@ public class CPU extends Thread {
                 linhaArq++;
                 setPc(linhaArq);
 
-            } while ((i >= limiteInf && i < limiteSup) && numero < 8);
+            } while ((i >= limiteInf && i < limiteSup) && numero < 15);
             i -= limiteInf;
         } catch (ArithmeticException a) {
             System.out.println("no rodaProg() DivZero = 1");
@@ -279,7 +307,7 @@ public class CPU extends Thread {
         // this.flag = 4;
         // c.printStackTrace();
         // }
-
+        setPCB(pcb);
         return false;
         // return actived;
 

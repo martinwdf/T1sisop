@@ -3,6 +3,7 @@ package controllers;
 import models.*;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.Semaphore;
 
 public class GerenteDeProcesso {
     private String[] arquivo;
@@ -13,23 +14,21 @@ public class GerenteDeProcesso {
     private PCB pcb;
     private GerenteMemoria grtMemoria;
     private FilaDeProntos prontos;
+    private Memoria memoria;
+    private Semaphore semaSch;
 
-    public GerenteDeProcesso() {
+    public GerenteDeProcesso(Semaphore semaSch, CPU cpu) {
         processos = new LinkedList<PCB>();
-        cpu = new CPU();
+        memoria = new Memoria();
+       // this.cpu = new CPU(memoria);
         grtMemoria = new GerenteMemoria();
         this.ID = -1;
         prontos = new FilaDeProntos();
-
-        // adiciona a quantidade de processos de acordo com o numero de programas
-        /*
-         * for (int i = 0; i < qtdProgramas; i++) { l = new Ler(s[i]); arquivo =
-         * l.criarVetor(); this.criaProcesso(arquivo); }
-         */
+        this.semaSch = semaSch;
     }
 
-    public void addProcesso(String nomeArquivo) {
-        criaProcesso(nomeArquivo);
+    public void addProcesso(String nomeArquivo, String[] arquivo) {
+        criaProcesso(nomeArquivo, arquivo);
     }
 
     public int getSize() {
@@ -41,28 +40,26 @@ public class GerenteDeProcesso {
         return ID;
     }
 
-    public void criaProcesso(String arquivo) {
+    public void criaProcesso(String nomeArquivo, String[] arquivo) {
         if (processos.size() == 0) {
             grtMemoria.primeiroLivre();
-            pcb = new PCB(0, arquivo);
-            pcb.setNomeArquivo(arquivo);
+            pcb = new PCB(0, nomeArquivo, arquivo);
+            pcb.setNomeArquivo(nomeArquivo);
             pcb.setLimiteSup(grtMemoria.alocar(0));
             pcb.setLimiteInf(pcb.getLimiteSup() - 127);
-          //  prontos.addPronto(pcb);
             processos.add(pcb);
         } else {
 
-            pcb = new PCB(grtMemoria.primeiroLivre(), arquivo);
+            pcb = new PCB(grtMemoria.primeiroLivre(), nomeArquivo, arquivo);
             pcb.setLimiteSup(grtMemoria.alocar(pcb.getID()) - 1);
             pcb.setLimiteInf(pcb.getLimiteSup() - 127);
-         //   prontos.addPronto(pcb);
             processos.add(pcb);
         }
     }
 
     public PCB removeProcesso() {
         PCB pcb1 = processos.remove();
-       // prontos.removePronto();
+        // prontos.removePronto();
         grtMemoria.Desaloca(pcb1.getLimiteSup());
         return pcb;
     }
@@ -82,7 +79,7 @@ public class GerenteDeProcesso {
         pcb.setEstado(Estado.AGUARDANDO);
     }
 
-    public void controlaProcessos() {
+   /* public void controlaProcessos() {
 
         //// vai passar a cpu do primero pcb
         PCB head = this.pcb_cpu();
@@ -96,8 +93,8 @@ public class GerenteDeProcesso {
 
         System.out.println("VALOR DO ID:" + head.getID());
 
-        boolean rodaPrograma = cpu.rodaProg(arquivo, head.getLimiteSup() - 127, head.getLimiteSup() - 1,
-                head.getLinhaArq());
+        //boolean rodaPrograma = cpu.rodaProg(arquivo, head.getLimiteSup() - 127, head.getLimiteSup() - 1,
+          //      head.getLinhaArq());
 
         if (rodaPrograma == true) {
             head.setEstado(Estado.FINALIZADO);
@@ -112,5 +109,23 @@ public class GerenteDeProcesso {
             processos.remove();
         }
         cpu.printMemoria();
+    }
+    */
+
+    public void liberaEscalonador() {
+        if (prontos.isEmpty()) {
+            try {
+                System.out.println("WAIT");
+                semaSch.wait();
+            } catch (InterruptedException e) {
+                System.out.println("WAIT");
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        else{
+            semaSch.notifyAll();
+        }
+        
     }
 }
