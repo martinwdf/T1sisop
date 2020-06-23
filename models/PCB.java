@@ -21,13 +21,20 @@ public class PCB {
     public String[] getArquivo(){
         return arquivo;
     }
-    public void setArquivo(String[] arquivo){ this.arquivo=arquivo;}
+    public void setArquivo(String[] arquivo){ 
+        this.arquivo=arquivo;
+    }
+    
     public String getNomeArquivo() {
         return nomeArquivo;
     }
 
     public void setNomeArquivo(String nomeArquivo) {
         this.nomeArquivo = nomeArquivo;
+    }
+
+    public String getNomeDoArquivo() {
+        return nomeArquivo;
     }
 
     public int getLinhaArq() {

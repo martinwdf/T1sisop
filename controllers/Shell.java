@@ -29,9 +29,9 @@ public class Shell extends Thread {
             l = new Ler(nomeArquivo);
             arquivo = l.criarVetor();
             ger.addProcesso(nomeArquivo, arquivo);
-            
-              try { Thread.sleep(5000); } catch (InterruptedException e) {
-              e.printStackTrace(); }
+           // System.out.println(nomeArquivo); 
+            //   try { Thread.sleep(5000); } catch (InterruptedException e) {
+            //   e.printStackTrace(); }
             ger.liberaEscalonador();
            // ger.controlaProcessos()
         }

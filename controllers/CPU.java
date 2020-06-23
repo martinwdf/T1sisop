@@ -17,7 +17,7 @@ public class CPU extends Thread {
     // flag: DivZero = 1 - EndFormaLimite = 2 - STOP = 3 - TRAp = 4
     private int flag;
     private int i;
-    boolean actived;
+    private boolean actived;
     private Label[] memoria;
     private PCB pcb;
     private RotTimer rot;
@@ -29,9 +29,10 @@ public class CPU extends Thread {
         this.pc = 0;
         this.flag = 0;
         this.i = 0;
-        this.actived = true;
+        this.actived = false;
         this.rot = rot;
         this.semaCPU = semaCPU;
+        start();
     }
 
     ////////////////////////////////////////////////////////////
@@ -69,9 +70,10 @@ public class CPU extends Thread {
                 flag = 0;
             }
             */
-
-
+            System.out.println("run() CPU");
+            // rodaProg(getPCB());
             if(rodaProg(getPCB())){
+                printMemoria();
                 //rotina de tratamento
             }
             if(!rodaProg(getPCB()))
@@ -111,7 +113,9 @@ public class CPU extends Thread {
         setPc(pcb.getPC());
         setPCB(pcb);
     }
-    public synchronized PCB getPCB(){return pcb;}
+    public synchronized PCB getPCB() {
+        return pcb;
+    }
 
     public synchronized double[] getRegs() {
         return regs;
@@ -119,6 +123,10 @@ public class CPU extends Thread {
 
     public synchronized int getI() {
         return i;
+    }
+
+    public synchronized void setRun(boolean actived){
+        this.actived = actived;
     }
 
     public synchronized void desalocaMemoria(int n) {
@@ -133,7 +141,7 @@ public class CPU extends Thread {
     }
 
     public synchronized boolean rodaProg(PCB pcb) {
-        String[] arquivo =pcb.getArquivo();
+        String[] arquivo = pcb.getArquivo();
         int limiteSup = pcb.getLimiteSup();
         int limiteInf = pcb.getLimiteInf();
         int linhaArq = pcb.getLinhaArq();
@@ -141,7 +149,6 @@ public class CPU extends Thread {
         i = limiteInf + linhaArq;
         // System.out.println("VALOR DE linha do arquivo: " + linhaArq);
         try {
-            System.out.println(">>>>>>>>>>>>>>>>AQUI<<<<<<<<<<<<<<<<<<");
             do {
 
                 s = arquivo[linhaArq].split(" ");

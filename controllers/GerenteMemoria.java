@@ -27,7 +27,8 @@ public class GerenteMemoria {
             }
             i++;
         }
-        System.out.println(livres[0]);
+        
+        System.out.println("GM - livre: "+ livres[0]);
         return -1;
     }
     public int alocar(int ID) {

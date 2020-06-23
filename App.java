@@ -14,12 +14,12 @@ public class App extends Thread {
         Memoria memoria = new Memoria();
         RotTimer rot = new RotTimer(semaSch, prontos);
         CPU cpu = new CPU(memoria, semaCPU, rot);
-        ger = new GerenteDeProcesso(semaSch, cpu);
-        Shell user = new Shell(ger);
         Escalonador esc = new Escalonador(prontos, semaSch, semaCPU, cpu);
-        user.start();
-        cpu.start();
-        esc.start();
+        ger = new GerenteDeProcesso(semaSch, cpu, esc);
+        Shell userShell = new Shell(ger);
+        userShell.start();
+        //cpu.start();
+        //esc.start();
 
     }
 
