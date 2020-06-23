@@ -4,37 +4,58 @@ import java.util.concurrent.Semaphore;
 
 import models.*;
 
-public class Escalonador extends Thread {
+public class Escalonador implements Runnable {
     private FilaDeProntos prontos;
     private Semaphore semaSch;
     private Semaphore semaCPU;
     private CPU cpu;
-    private boolean actived;
+    private boolean estaSuspensa;
 
     public Escalonador(FilaDeProntos prontos, Semaphore semaSch, Semaphore semaCPU, CPU cpu) {
         this.prontos = prontos;
         this.semaSch = semaSch;
         this.semaCPU = semaCPU;
         this.cpu = cpu;
-        this.actived = false;
-        start();
+        this.estaSuspensa = true;
+        new Thread(this).start();
     }
 
     // escalona os processos prontos para a cpu
     @Override
     public void run() {
-        while (actived) {
-            // try {
-            // semaSch.wait();
-            // } catch (InterruptedException e) {
-            // e.printStackTrace();
-            // }
-            // manda o pcb pra cpu
-            System.out.println("run() Escalonador");
-            rodaProcesso();
-            // semaCPU.notifyAll();
+        //System.out.println("Esc :" + semaSch.availablePermits());
+        while (true) {
             // semaSch.release();
+            try {
+                if (prontos.isEmpty()) {
+                    //semaCPU.acquire();
+                    System.out.println("run() semaCPU.acquire Escalonador");
+                }
+                synchronized (this) {
+                    while (estaSuspensa) {
+                        wait();
+                    }
+                }
+            } catch (InterruptedException e) {
+                // TODO: handle exception
+                e.printStackTrace();
+            }
+            System.out.println("run() Escalonador");
+            // manda o pcb pra cpu
+            cpu.resume();
+            //semaCPU.release();
+            rodaProcesso();
         }
+
+    }
+
+    public void suspend() {
+        this.estaSuspensa = true;
+    }
+
+    public synchronized void resume() {
+        this.estaSuspensa = false;
+        notifyAll();
     }
 
     public void rodaProcesso() {
@@ -47,8 +68,4 @@ public class Escalonador extends Thread {
 
     }
 
-    public synchronized void setRun(boolean actived) {
-        this.actived = actived;
-        cpu.setRun(true);
-    }
 }

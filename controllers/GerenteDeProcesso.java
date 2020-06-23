@@ -51,6 +51,7 @@ public class GerenteDeProcesso {
             pcb.setLimiteInf(pcb.getLimiteSup() - 127);
             processos.add(pcb);
             prontos.addPronto(pcb);
+            //pcb.printIdPCB();
         } else {
             pcb = new PCB(grtMemoria.primeiroLivre(), nomeArquivo, arquivo);
             pcb.setLimiteSup(grtMemoria.alocar(pcb.getID()) - 1);
@@ -116,10 +117,12 @@ public class GerenteDeProcesso {
     */
 
     public void liberaEscalonador() {
+
+        
         if (prontos.isEmpty()) {
             try {
                 System.out.println("WAIT, prontos isEmpty");
-                //semaSch.wait();
+
                 semaSch.acquire();
 
             } catch (InterruptedException e) {
@@ -128,14 +131,17 @@ public class GerenteDeProcesso {
                 e.printStackTrace();
             }
         }
-        // else{
-        //     esc.setRun(true);
-        //     //cpu.setRun(true);
+        else{
+            System.out.println("run() GP");
+            esc.resume();
+            //System.out.println("GP: " +semaSch.availablePermits());
+            //semaSch.release();
+            //System.out.println(semaSch.availablePermits());
 
-        //    semaSch.notifyAll();
-        // }
-        System.out.println("run() GP");
-        esc.setRun(true);
+            //cpu.setRun(true);
+        }
+        // System.out.println("run() GP");
+        // esc.resume();
         //System.out.println("run() GP 2");
 
         //semaSch.release();

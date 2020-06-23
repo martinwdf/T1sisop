@@ -5,19 +5,19 @@ import models.Label;
 import models.Memoria;
 import models.PCB;
 
-public class CPU extends Thread {
+public class CPU implements Runnable {
     private Semaphore semaCPU;
     // private Semaphore semeTimer;
-   // private Semaphore sema
+    // private Semaphore sema
 
     private double[] regs;
     private String[] s;
-    //private Label[] memoria;
+    // private Label[] memoria;
     private int pc;
     // flag: DivZero = 1 - EndFormaLimite = 2 - STOP = 3 - TRAp = 4
     private int flag;
     private int i;
-    private boolean actived;
+    private boolean estaSuspensa;
     private Label[] memoria;
     private PCB pcb;
     private RotTimer rot;
@@ -29,59 +29,61 @@ public class CPU extends Thread {
         this.pc = 0;
         this.flag = 0;
         this.i = 0;
-        this.actived = false;
+        this.estaSuspensa = true;
         this.rot = rot;
         this.semaCPU = semaCPU;
-        start();
+        new Thread(this).start();
     }
 
     ////////////////////////////////////////////////////////////
     @Override
     public void run() {
-        while (actived) {
-          /*  try {
-                semaCPU.acquire();
-                // semeCPU.wait();
-                // semeTimer.signal();
-                // Thread.sleep(5000);
-
+        while (true) {
+            try {
+                synchronized (this) {
+                    while (estaSuspensa) {
+                        wait();
+                    }
+                }
             } catch (InterruptedException e) {
+                // TODO: handle exception
                 e.printStackTrace();
             }
-            */
-       /*     if (flag == 1) {
-                System.out.println("no Run() DivZero = 1");
-                // tratamento
-                flag = 0;
-            }
-            if (flag == 2) {
-                System.out.println("no Run() EndFormaLimite = 2");
-                // tratamento
-                flag = 0;
-            }
-            if (flag == 3) {
-                System.out.println("no Run() STOP = 3");
-                // tratamento
-                flag = 0;
-            }
-            if (flag == 4) {
-                System.out.println("no Run() TRAP = 4");
-                // tratamento
-                flag = 0;
-            }
-            */
+
+            /*
+             * try { semaCPU.acquire(); // semeCPU.wait(); // semeTimer.signal(); //
+             * Thread.sleep(5000);
+             * 
+             * } catch (InterruptedException e) { e.printStackTrace(); }
+             */
+            /*
+             * if (flag == 1) { System.out.println("no Run() DivZero = 1"); // tratamento
+             * flag = 0; } if (flag == 2) {
+             * System.out.println("no Run() EndFormaLimite = 2"); // tratamento flag = 0; }
+             * if (flag == 3) { System.out.println("no Run() STOP = 3"); // tratamento flag
+             * = 0; } if (flag == 4) { System.out.println("no Run() TRAP = 4"); //
+             * tratamento flag = 0; }
+             */
             System.out.println("run() CPU");
             // rodaProg(getPCB());
-            if(rodaProg(getPCB())){
+            if (rodaProg(getPCB())) {
                 printMemoria();
-                //rotina de tratamento
+                // rotina de tratamento
             }
-            if(!rodaProg(getPCB()))
-            {
-               rot.tratamento(getPCB());
+            if (!rodaProg(getPCB())) {
+                rot.tratamento(getPCB());
             }
-            semaCPU.release();
+            // semaCPU.release();
         }
+    }
+
+    public void suspend() {
+        this.estaSuspensa = true;
+    }
+
+    public synchronized void resume() {
+        this.estaSuspensa = false;
+        notify();
     }
 
     ////////////////////////////////////////////////////////////
@@ -105,14 +107,18 @@ public class CPU extends Thread {
         this.regs = regs;
     }
 
-    public synchronized void setPCB(PCB pcb){
+    public synchronized void setPCB(PCB pcb) {
         this.pcb = pcb;
     }
-    public synchronized void salvaContexto(PCB pcb){
+
+    public synchronized void salvaContexto(PCB pcb) {
+        // pcb.printIdPCB();
+        System.out.println("salvaContexto(PCB pcb)");
         setRegs(pcb.getRegs());
         setPc(pcb.getPC());
         setPCB(pcb);
     }
+
     public synchronized PCB getPCB() {
         return pcb;
     }
@@ -123,10 +129,6 @@ public class CPU extends Thread {
 
     public synchronized int getI() {
         return i;
-    }
-
-    public synchronized void setRun(boolean actived){
-        this.actived = actived;
     }
 
     public synchronized void desalocaMemoria(int n) {
