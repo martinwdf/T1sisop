@@ -7,15 +7,20 @@ import models.PCB;
 
 public class RotTimer {
     //Semaphore semaSch;
-    FilaDeProntos prontos;
+    private FilaDeProntos prontos;
+    private Escalonador esc;
     
 
     public RotTimer(FilaDeProntos prontos){
         //this.semaSch = semaSch;
         this.prontos = prontos;
+        //this.esc=esc;
     }
     public void tratamento(PCB pcb){
+        
+        prontos.removePronto();
         prontos.addPronto(pcb);
+        //liberar a thread escalonador...
         //semaSch.notifyAll();
     }
 

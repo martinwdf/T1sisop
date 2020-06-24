@@ -15,7 +15,7 @@ public class App extends Thread {
         RotTimer rot = new RotTimer(prontos);
         CPU cpu = new CPU(memoria, rot);
         Escalonador esc = new Escalonador(prontos, cpu);
-        ger = new GerenteDeProcesso(cpu, esc);
+        ger = new GerenteDeProcesso(cpu, esc, prontos);
         Shell userShell = new Shell(ger);
         userShell.start();
 

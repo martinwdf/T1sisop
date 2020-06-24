@@ -61,13 +61,15 @@ public class CPU implements Runnable {
             semaCPU.release();
             System.out.println("run() CPU");
             // rodaProg(getPCB());
-            if (rodaProg(getPCB())) {
-                printMemoria();
-                // rotina de tratamento
+            boolean b = rodaProg(getPCB());
+            if(b){
+
             }
-            if (!rodaProg(getPCB())) {
+            else{
                 rot.tratamento(getPCB());
             }
+           
+          
             /*
             * try { semaCPU.acquire(); // semeCPU.wait(); // semeTimer.signal(); //
                 * Thread.sleep(5000);

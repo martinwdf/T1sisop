@@ -18,11 +18,11 @@ public class GerenteDeProcesso {
     //private Semaphore semaSch;
     private Escalonador esc;
 
-    public GerenteDeProcesso(CPU cpu, Escalonador esc) {
+    public GerenteDeProcesso(CPU cpu, Escalonador esc, FilaDeProntos prontos) {
         processos = new LinkedList<PCB>();
         //this.semaSch = new Semaphore(0);
         //this.memoria = new Memoria();
-        this.prontos = new FilaDeProntos();
+        this.prontos = prontos;
         this.grtMemoria = new GerenteMemoria();
         // this.cpu = new CPU(memoria);
         this.cpu = cpu;

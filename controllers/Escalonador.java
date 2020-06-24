@@ -72,6 +72,8 @@ public class Escalonador implements Runnable {
         // manda a head da fila de prontos para cpu, e depois atualiza a cpu do pcb.
         System.out.println("rodaProcesso() Escalonador");
         PCB pcb = prontos.getHead();
+        
+        System.out.println(pcb.getArquivo()[1] + "tamanho lista:" + prontos.getSize());
         cpu.salvaContexto(pcb);
         // boolean rodaPrograma = cpu.rodaProg(arquivo, head.getLimiteSup() - 127,
         // head.getLimiteSup() - 1,head.getLinhaArq());
