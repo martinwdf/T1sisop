@@ -8,11 +8,11 @@ import models.PCB;
 public class CPU extends Thread {
     private Semaphore semaCPU;
     // private Semaphore semeTimer;
-   // private Semaphore sema
+    // private Semaphore sema
 
     private double[] regs;
     private String[] s;
-    //private Label[] memoria;
+    // private Label[] memoria;
     private int pc;
     // flag: DivZero = 1 - EndFormaLimite = 2 - STOP = 3 - TRAp = 4
     private int flag;
@@ -32,56 +32,42 @@ public class CPU extends Thread {
         this.actived = false;
         this.rot = rot;
         this.semaCPU = semaCPU;
-        start();
     }
 
     ////////////////////////////////////////////////////////////
     @Override
     public void run() {
-        while (actived) {
-          /*  try {
-                semaCPU.acquire();
-                // semeCPU.wait();
-                // semeTimer.signal();
-                // Thread.sleep(5000);
+        while (true) {
+            /*
+             * if (flag == 1) { System.out.println("no Run() DivZero = 1"); // tratamento
+             * flag = 0; } if (flag == 2) {
+             * System.out.println("no Run() EndFormaLimite = 2"); // tratamento flag = 0; }
+             * if (flag == 3) { System.out.println("no Run() STOP = 3"); // tratamento flag
+             * = 0; } if (flag == 4) { System.out.println("no Run() TRAP = 4"); //
+             * tratamento flag = 0; }
+             */
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            */
-       /*     if (flag == 1) {
-                System.out.println("no Run() DivZero = 1");
-                // tratamento
-                flag = 0;
-            }
-            if (flag == 2) {
-                System.out.println("no Run() EndFormaLimite = 2");
-                // tratamento
-                flag = 0;
-            }
-            if (flag == 3) {
-                System.out.println("no Run() STOP = 3");
-                // tratamento
-                flag = 0;
-            }
-            if (flag == 4) {
-                System.out.println("no Run() TRAP = 4");
-                // tratamento
-                flag = 0;
-            }
-            */
+             try{
+                 semaCPU.acquire();
+             }catch(InterruptedException e){
+
+             }
             System.out.println("run() CPU");
-            // rodaProg(getPCB());
-            if(rodaProg(getPCB())){
-                printMemoria();
-                //rotina de tratamento
+            Boolean b = rodaProg(getPCB());
+            if (b == false) {
+
+                rot.tratamento(getPCB());
+                try {
+                    semaCPU.acquire();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            if(!rodaProg(getPCB()))
-            {
-               rot.tratamento(getPCB());
+            else{
+                //chama rot int
             }
-            semaCPU.release();
-        }
+            }
+        
     }
 
     ////////////////////////////////////////////////////////////

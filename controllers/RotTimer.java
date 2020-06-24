@@ -16,7 +16,8 @@ public class RotTimer {
     }
     public void tratamento(PCB pcb){
         prontos.addPronto(pcb);
-        semaSch.notifyAll();
+        
+        semaSch.release();
     }
 
 }

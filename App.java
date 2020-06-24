@@ -11,15 +11,15 @@ public class App extends Thread {
         Semaphore semaCPU = new Semaphore(0);
         Semaphore semaSch = new Semaphore(0);
         FilaDeProntos prontos = new FilaDeProntos();
-        Memoria memoria = new Memoria();
         RotTimer rot = new RotTimer(semaSch, prontos);
+        Memoria memoria = new Memoria();
         CPU cpu = new CPU(memoria, semaCPU, rot);
+        ger = new GerenteDeProcesso(semaSch, cpu);
         Escalonador esc = new Escalonador(prontos, semaSch, semaCPU, cpu);
-        ger = new GerenteDeProcesso(semaSch, cpu, esc);
         Shell userShell = new Shell(ger);
         userShell.start();
-        //cpu.start();
-        //esc.start();
+        cpu.start();
+        esc.start();
 
     }
 

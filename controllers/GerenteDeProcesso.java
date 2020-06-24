@@ -16,9 +16,8 @@ public class GerenteDeProcesso {
     private FilaDeProntos prontos;
     private Memoria memoria;
     private Semaphore semaSch;
-    private Escalonador esc;
 
-    public GerenteDeProcesso(Semaphore semaSch, CPU cpu, Escalonador esc) {
+    public GerenteDeProcesso(Semaphore semaSch, CPU cpu) {
         processos = new LinkedList<PCB>();
         memoria = new Memoria();
        // this.cpu = new CPU(memoria);
@@ -26,7 +25,6 @@ public class GerenteDeProcesso {
         this.ID = -1;
         prontos = new FilaDeProntos();
         this.semaSch = semaSch;
-        this.esc = esc;
     }
 
     public void addProcesso(String nomeArquivo, String[] arquivo) {
@@ -116,28 +114,17 @@ public class GerenteDeProcesso {
     */
 
     public void liberaEscalonador() {
-        if (prontos.isEmpty()) {
             try {
-                System.out.println("WAIT, prontos isEmpty");
                 //semaSch.wait();
                 semaSch.acquire();
+                System.out.println("WAIT, prontos isEmpty");
 
             } catch (InterruptedException e) {
-                System.out.println("Interttupet Exception");
+             //   System.out.println("Interttupet Exception");
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-        }
-        // else{
-        //     esc.setRun(true);
-        //     //cpu.setRun(true);
-
-        //    semaSch.notifyAll();
-        // }
-        System.out.println("run() GP");
-        esc.setRun(true);
-        //System.out.println("run() GP 2");
-
-        //semaSch.release();
+            semaSch.release();
+           // semaSch.notifyAll();
     }
 }

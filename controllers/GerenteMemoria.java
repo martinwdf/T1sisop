@@ -15,9 +15,6 @@ public class GerenteMemoria {
     public void setLivres(boolean[] livres) {this.livres = livres;}
 
 
-    public boolean desalocaParticao(){
-        return true;
-    }
     public int primeiroLivre(){
         int i=0;
         for(boolean livre : livres){

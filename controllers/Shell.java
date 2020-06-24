@@ -15,7 +15,7 @@ public class Shell extends Thread {
     private Ler l;
 
     public Shell(GerenteDeProcesso ger) {
-        sem = new Semaphore(1);
+        sem = new Semaphore(0);
         scan = new Scanner(System.in);
         this.ger =ger;
     }
@@ -29,10 +29,10 @@ public class Shell extends Thread {
             l = new Ler(nomeArquivo);
             arquivo = l.criarVetor();
             ger.addProcesso(nomeArquivo, arquivo);
+            ger.liberaEscalonador();
            // System.out.println(nomeArquivo); 
             //   try { Thread.sleep(5000); } catch (InterruptedException e) {
             //   e.printStackTrace(); }
-            ger.liberaEscalonador();
            // ger.controlaProcessos()
         }
     }
