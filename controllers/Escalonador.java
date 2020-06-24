@@ -7,16 +7,19 @@ import models.*;
 public class Escalonador implements Runnable {
     private FilaDeProntos prontos;
     private Semaphore semaSch;
-    private Semaphore semaCPU;
+    //private Semaphore semaCPU;
     private CPU cpu;
     private boolean estaSuspensa;
+    private boolean semaphoreBlock;
+    
 
-    public Escalonador(FilaDeProntos prontos, Semaphore semaSch, Semaphore semaCPU, CPU cpu) {
+    public Escalonador(FilaDeProntos prontos, CPU cpu) {
         this.prontos = prontos;
-        this.semaSch = semaSch;
-        this.semaCPU = semaCPU;
+        this.semaSch = new Semaphore(1);
+        //this.semaCPU = new Semaphore(0);
         this.cpu = cpu;
         this.estaSuspensa = true;
+        this.semaphoreBlock = true;
         new Thread(this).start();
     }
 
@@ -27,9 +30,11 @@ public class Escalonador implements Runnable {
         while (true) {
             // semaSch.release();
             try {
-                if (prontos.isEmpty()) {
-                    //semaCPU.acquire();
-                    System.out.println("run() semaCPU.acquire Escalonador");
+                System.out.println("run() try Escalonador");
+
+                if (semaphoreBlock) {
+                    semaSch.acquire();
+                    System.out.println("run() semaSch.acquire Escalonador");
                 }
                 synchronized (this) {
                     while (estaSuspensa) {
@@ -40,10 +45,11 @@ public class Escalonador implements Runnable {
                 // TODO: handle exception
                 e.printStackTrace();
             }
+            semaSch.release();
             System.out.println("run() Escalonador");
             // manda o pcb pra cpu
             cpu.resume();
-            //semaCPU.release();
+            cpu.setSemaphoreBlock();
             rodaProcesso();
         }
 
@@ -56,6 +62,10 @@ public class Escalonador implements Runnable {
     public synchronized void resume() {
         this.estaSuspensa = false;
         notifyAll();
+    }
+
+    public void setSemaphoreBlock(){
+        this.semaphoreBlock = false;
     }
 
     public void rodaProcesso() {

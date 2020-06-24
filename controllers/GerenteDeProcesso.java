@@ -14,18 +14,19 @@ public class GerenteDeProcesso {
     private PCB pcb;
     private GerenteMemoria grtMemoria;
     private FilaDeProntos prontos;
-    private Memoria memoria;
-    private Semaphore semaSch;
+    //private Memoria memoria;
+    //private Semaphore semaSch;
     private Escalonador esc;
 
-    public GerenteDeProcesso(Semaphore semaSch, CPU cpu, Escalonador esc) {
+    public GerenteDeProcesso(CPU cpu, Escalonador esc) {
         processos = new LinkedList<PCB>();
-        memoria = new Memoria();
-       // this.cpu = new CPU(memoria);
-        grtMemoria = new GerenteMemoria();
+        //this.semaSch = new Semaphore(0);
+        //this.memoria = new Memoria();
+        this.prontos = new FilaDeProntos();
+        this.grtMemoria = new GerenteMemoria();
+        // this.cpu = new CPU(memoria);
+        this.cpu = cpu;
         this.ID = -1;
-        prontos = new FilaDeProntos();
-        this.semaSch = semaSch;
         this.esc = esc;
     }
 
@@ -116,34 +117,25 @@ public class GerenteDeProcesso {
     }
     */
 
-    public void liberaEscalonador() {
+    public void liberaEscalonador() {       
+        if (!prontos.isEmpty()) {
 
-        
-        if (prontos.isEmpty()) {
-            try {
-                System.out.println("WAIT, prontos isEmpty");
-
-                semaSch.acquire();
-
-            } catch (InterruptedException e) {
-                System.out.println("Interttupet Exception");
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        else{
             System.out.println("run() GP");
+            esc.setSemaphoreBlock();
             esc.resume();
-            //System.out.println("GP: " +semaSch.availablePermits());
-            //semaSch.release();
-            //System.out.println(semaSch.availablePermits());
-
-            //cpu.setRun(true);
+            // try {
+            //     System.out.println("WAIT, prontos isEmpty");
+            //     semaSch.acquire();
+            // } catch (InterruptedException e) {
+            //     System.out.println("Interttupet Exception");
+            //     // TODO Auto-generated catch block
+            //     e.printStackTrace();
+            // }
         }
-        // System.out.println("run() GP");
-        // esc.resume();
-        //System.out.println("run() GP 2");
+        System.out.println("prontos.isEmpty() GP");
 
-        //semaSch.release();
+            // System.out.println("run() GP");
+            // esc.setSemaphoreBlock();
+            // esc.resume();
     }
 }

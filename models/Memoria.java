@@ -14,7 +14,7 @@ public class Memoria {
 
     public String toString(){
         String s ="";
-        for(int i=0; i<1024; i++ ){
+        for(int i=0; i < 1024; i++ ){
             s = memoria[i].print();
         }
         return s;

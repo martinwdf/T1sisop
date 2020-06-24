@@ -6,17 +6,17 @@ import models.FilaDeProntos;
 import models.PCB;
 
 public class RotTimer {
-    Semaphore semaSch;
+    //Semaphore semaSch;
     FilaDeProntos prontos;
     
 
-    public RotTimer(Semaphore semaSch, FilaDeProntos prontos){
-        this.semaSch = semaSch;
+    public RotTimer(FilaDeProntos prontos){
+        //this.semaSch = semaSch;
         this.prontos = prontos;
     }
     public void tratamento(PCB pcb){
         prontos.addPronto(pcb);
-        semaSch.notifyAll();
+        //semaSch.notifyAll();
     }
 
 }

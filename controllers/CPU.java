@@ -14,15 +14,15 @@ public class CPU implements Runnable {
     private String[] s;
     // private Label[] memoria;
     private int pc;
-    // flag: DivZero = 1 - EndFormaLimite = 2 - STOP = 3 - TRAp = 4
     private int flag;
     private int i;
     private boolean estaSuspensa;
     private Label[] memoria;
     private PCB pcb;
     private RotTimer rot;
+    private boolean semaphoreBlock;
 
-    public CPU(Memoria memoria, Semaphore semaCPU, RotTimer rot) {
+    public CPU(Memoria memoria, RotTimer rot) {
 
         this.regs = new double[8];
         this.memoria = memoria.getMemoria();
@@ -31,7 +31,9 @@ public class CPU implements Runnable {
         this.i = 0;
         this.estaSuspensa = true;
         this.rot = rot;
-        this.semaCPU = semaCPU;
+        this.semaCPU = new Semaphore(1);
+        this.semaphoreBlock = true;
+        //this.semaCPU = semaCPU;
         new Thread(this).start();
     }
 
@@ -40,6 +42,12 @@ public class CPU implements Runnable {
     public void run() {
         while (true) {
             try {
+                System.out.println("run() try CPU");
+
+                if (semaphoreBlock) {
+                    semaCPU.acquire();
+                    System.out.println("run() semaCPU.acquire CPU");
+                }
                 synchronized (this) {
                     while (estaSuspensa) {
                         wait();
@@ -49,10 +57,20 @@ public class CPU implements Runnable {
                 // TODO: handle exception
                 e.printStackTrace();
             }
-
+            
+            semaCPU.release();
+            System.out.println("run() CPU");
+            // rodaProg(getPCB());
+            if (rodaProg(getPCB())) {
+                printMemoria();
+                // rotina de tratamento
+            }
+            if (!rodaProg(getPCB())) {
+                rot.tratamento(getPCB());
+            }
             /*
-             * try { semaCPU.acquire(); // semeCPU.wait(); // semeTimer.signal(); //
-             * Thread.sleep(5000);
+            * try { semaCPU.acquire(); // semeCPU.wait(); // semeTimer.signal(); //
+                * Thread.sleep(5000);
              * 
              * } catch (InterruptedException e) { e.printStackTrace(); }
              */
@@ -64,16 +82,7 @@ public class CPU implements Runnable {
              * = 0; } if (flag == 4) { System.out.println("no Run() TRAP = 4"); //
              * tratamento flag = 0; }
              */
-            System.out.println("run() CPU");
-            // rodaProg(getPCB());
-            if (rodaProg(getPCB())) {
-                printMemoria();
-                // rotina de tratamento
-            }
-            if (!rodaProg(getPCB())) {
-                rot.tratamento(getPCB());
-            }
-            // semaCPU.release();
+            
         }
     }
 
@@ -84,6 +93,10 @@ public class CPU implements Runnable {
     public synchronized void resume() {
         this.estaSuspensa = false;
         notify();
+    }
+
+    public void setSemaphoreBlock(){
+        this.semaphoreBlock = false;
     }
 
     ////////////////////////////////////////////////////////////
