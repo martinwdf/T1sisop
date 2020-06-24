@@ -4,39 +4,68 @@ import java.util.concurrent.Semaphore;
 
 import models.*;
 
-public class Escalonador extends Thread {
+public class Escalonador implements Runnable {
     private FilaDeProntos prontos;
     private Semaphore semaSch;
-    private Semaphore semaCPU;
+    //private Semaphore semaCPU;
     private CPU cpu;
-    private boolean actived;
+    private boolean estaSuspensa;
+    private boolean semaphoreBlock;
+    
 
-    public Escalonador(FilaDeProntos prontos, Semaphore semaSch, Semaphore semaCPU, CPU cpu) {
+    public Escalonador(FilaDeProntos prontos, CPU cpu) {
         this.prontos = prontos;
-        this.semaSch = semaSch;
-        this.semaCPU = semaCPU;
+        this.semaSch = new Semaphore(1);
+        //this.semaCPU = new Semaphore(0);
         this.cpu = cpu;
-        this.actived = true;
+        this.estaSuspensa = true;
+        this.semaphoreBlock = true;
+        new Thread(this).start();
     }
 
     // escalona os processos prontos para a cpu
     @Override
     public void run() {
-        while (actived) {
+        //System.out.println("Esc :" + semaSch.availablePermits());
+        while (true) {
+            // semaSch.release();
             try {
-                System.out.println( "UHUKK" +semaSch.availablePermits());
-                    semaCPU.acquire();
-                    System.out.println( "UHUKK" +semaSch.availablePermits());
+                System.out.println("run() try Escalonador");
 
-                 } catch (InterruptedException e) {
-                    e.printStackTrace();
-                 }
-            // manda o pcb pra cpu
+                if (semaphoreBlock) {
+                    semaSch.acquire();
+                    System.out.println("run() semaSch.acquire Escalonador");
+                }
+                synchronized (this) {
+                    while (estaSuspensa) {
+                        wait();
+                    }
+                }
+            } catch (InterruptedException e) {
+                // TODO: handle exception
+                e.printStackTrace();
+            }
+            semaSch.release();
             System.out.println("run() Escalonador");
+            // manda o pcb pra cpu
+            cpu.resume();
+            cpu.setSemaphoreBlock();
             rodaProcesso();
-             semaCPU.release();
-           //  semaSch.release();
         }
+
+    }
+
+    public void suspend() {
+        this.estaSuspensa = true;
+    }
+
+    public synchronized void resume() {
+        this.estaSuspensa = false;
+        notifyAll();
+    }
+
+    public void setSemaphoreBlock(){
+        this.semaphoreBlock = false;
     }
 
     public synchronized void rodaProcesso() {
@@ -49,8 +78,4 @@ public class Escalonador extends Thread {
 
     }
 
-    public synchronized void setRun(boolean actived) {
-        this.actived = actived;
-        cpu.setRun(true);
-    }
 }

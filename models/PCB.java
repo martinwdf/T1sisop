@@ -82,4 +82,8 @@ public class PCB {
     public void setEstado(Estado estado) {
         this.estado = estado;
     }
+
+    public void printIdPCB() {
+        System.out.println("ID PCB: "+ getID());
+    }
 }

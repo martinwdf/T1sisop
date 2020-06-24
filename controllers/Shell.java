@@ -6,16 +6,16 @@ import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 
 public class Shell extends Thread {
-    private Semaphore sem;
+    //private Semaphore sem;
+    // private String[] programa;
     private Scanner scan;
-    private String[] programa;
     private GerenteDeProcesso ger;
     private String nomeArquivo;
     private String[] arquivo;
     private Ler l;
 
     public Shell(GerenteDeProcesso ger) {
-        sem = new Semaphore(0);
+        // sem = new Semaphore(1);
         scan = new Scanner(System.in);
         this.ger =ger;
     }

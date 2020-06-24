@@ -14,17 +14,20 @@ public class GerenteDeProcesso {
     private PCB pcb;
     private GerenteMemoria grtMemoria;
     private FilaDeProntos prontos;
-    private Memoria memoria;
-    private Semaphore semaSch;
+    //private Memoria memoria;
+    //private Semaphore semaSch;
+    private Escalonador esc;
 
-    public GerenteDeProcesso(Semaphore semaSch, CPU cpu) {
+    public GerenteDeProcesso(CPU cpu, Escalonador esc) {
         processos = new LinkedList<PCB>();
-        memoria = new Memoria();
-       // this.cpu = new CPU(memoria);
-        grtMemoria = new GerenteMemoria();
+        //this.semaSch = new Semaphore(0);
+        //this.memoria = new Memoria();
+        this.prontos = new FilaDeProntos();
+        this.grtMemoria = new GerenteMemoria();
+        // this.cpu = new CPU(memoria);
+        this.cpu = cpu;
         this.ID = -1;
-        prontos = new FilaDeProntos();
-        this.semaSch = semaSch;
+        this.esc = esc;
     }
 
     public void addProcesso(String nomeArquivo, String[] arquivo) {
@@ -49,6 +52,7 @@ public class GerenteDeProcesso {
             pcb.setLimiteInf(pcb.getLimiteSup() - 127);
             processos.add(pcb);
             prontos.addPronto(pcb);
+            //pcb.printIdPCB();
         } else {
             pcb = new PCB(grtMemoria.primeiroLivre(), nomeArquivo, arquivo);
             pcb.setLimiteSup(grtMemoria.alocar(pcb.getID()) - 1);
@@ -113,18 +117,25 @@ public class GerenteDeProcesso {
     }
     */
 
-    public void liberaEscalonador() {
-            try {
-                //semaSch.wait();
-                semaSch.acquire();
-                System.out.println("WAIT, prontos isEmpty");
+    public void liberaEscalonador() {       
+        if (!prontos.isEmpty()) {
 
-            } catch (InterruptedException e) {
-             //   System.out.println("Interttupet Exception");
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            semaSch.release();
-           // semaSch.notifyAll();
+            System.out.println("run() GP");
+            esc.setSemaphoreBlock();
+            esc.resume();
+            // try {
+            //     System.out.println("WAIT, prontos isEmpty");
+            //     semaSch.acquire();
+            // } catch (InterruptedException e) {
+            //     System.out.println("Interttupet Exception");
+            //     // TODO Auto-generated catch block
+            //     e.printStackTrace();
+            // }
+        }
+        System.out.println("prontos.isEmpty() GP");
+
+            // System.out.println("run() GP");
+            // esc.setSemaphoreBlock();
+            // esc.resume();
     }
 }
