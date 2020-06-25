@@ -50,7 +50,7 @@ public class CPU extends Thread {
                     if (b) {
                         System.out.println("if(b) CPU");
                         printMemoria();
-                        setSemaphoreBlock();
+                        //setSemaphoreBlock();
                     } else {
                         System.out.println("rot.tratamento(getPCB())  CPU");
                         semaCPU.acquire();
