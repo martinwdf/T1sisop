@@ -1,83 +1,80 @@
 package controllers;
 
+import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
 import models.*;
 
-public class Escalonador implements Runnable {
+public class Escalonador extends Thread {
     private FilaDeProntos prontos;
     private Semaphore semaSch;
-    //private Semaphore semaCPU;
+    // private Semaphore semaCPU;
     private CPU cpu;
-    private boolean estaSuspensa;
+    // private boolean estaSuspensa;
     private boolean semaphoreBlock;
-    
 
-    public Escalonador(FilaDeProntos prontos, CPU cpu) {
+    public Escalonador(FilaDeProntos prontos, CPU cpu, Semaphore semaSch) {
+        //this.processos = processos;
+        // this.semaCPU = new Semaphore(0);
         this.prontos = prontos;
-        this.semaSch = new Semaphore(1);
-        //this.semaCPU = new Semaphore(0);
+        // this.semaSch = new Semaphore(1);
+        this.semaSch = semaSch;
         this.cpu = cpu;
-        this.estaSuspensa = true;
+        // this.estaSuspensa = true;
         this.semaphoreBlock = true;
-        new Thread(this).start();
+        // new Thread(this).start();
+        start();
+
     }
 
     // escalona os processos prontos para a cpu
     @Override
     public void run() {
-        //System.out.println("Esc :" + semaSch.availablePermits());
+        // System.out.println("Esc :" + semaSch.availablePermits());
         while (true) {
             // semaSch.release();
             try {
-                System.out.println("run() try Escalonador");
+                //System.out.println("run() try Escalonador");
 
                 if (semaphoreBlock) {
                     semaSch.acquire();
-                    System.out.println("run() semaSch.acquire Escalonador");
-                }
-                synchronized (this) {
-                    while (estaSuspensa) {
-                        wait();
-                    }
-                }
+                    //.out.println("run() semaSch.acquire Escalonador");
+                } else {
+                    semaSch.release();
+                    //System.out.println("run() Escalonador");
+                    rodaProcesso();
+                    //cpu.setSemaphoreUnblock();
+                    semaSch.acquire();
+                } 
+
             } catch (InterruptedException e) {
                 // TODO: handle exception
                 e.printStackTrace();
+            } finally {
+
             }
-            semaSch.release();
-            System.out.println("run() Escalonador");
-            // manda o pcb pra cpu
-            cpu.resume();
-            cpu.setSemaphoreBlock();
-            rodaProcesso();
+
         }
 
     }
 
-    public void suspend() {
-        this.estaSuspensa = true;
+
+    public void setSemaphoreBlock() {
+        this.semaphoreBlock = true;
     }
 
-    public synchronized void resume() {
-        this.estaSuspensa = false;
-        notifyAll();
-    }
-
-    public void setSemaphoreBlock(){
+    public void setSemaphoreUnblock() {
         this.semaphoreBlock = false;
     }
 
     public synchronized void rodaProcesso() {
         // manda a head da fila de prontos para cpu, e depois atualiza a cpu do pcb.
-        System.out.println("rodaProcesso() Escalonador");
-        PCB pcb = prontos.getHead();
-        
-        System.out.println(pcb.getArquivo()[1] + "tamanho lista:" + prontos.getSize());
-        cpu.salvaContexto(pcb);
+        //System.out.println("rodaProcesso() Escalonador");
+        //PCB pcb = prontos.getHead();
+        //System.out.println(pcb.getArquivo()[1] + "tamanho lista:" + prontos.getSize());
+        cpu.salvaContexto(prontos.getHead());
         // boolean rodaPrograma = cpu.rodaProg(arquivo, head.getLimiteSup() - 127,
         // head.getLimiteSup() - 1,head.getLinhaArq());
-
     }
 
 }

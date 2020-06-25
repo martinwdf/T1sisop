@@ -10,19 +10,21 @@ public class PCB {
     private String[] arquivo;
 
     public PCB(final int ID, String nomeArquivo, String[] arquivo) {
+        
+        this.setLinhaArq(0);
+        this.setNomeArquivo(nomeArquivo);
+        this.arquivo = arquivo;
         this.ID = ID;
         this.estado = Estado.PRONTO;
         this.regs = new double[8];
-        this.setLinhaArq(0);
-        setNomeArquivo(nomeArquivo);
-        this.arquivo = arquivo;
     }
+
 
     public String[] getArquivo(){
         return arquivo;
     }
     public void setArquivo(String[] arquivo){ 
-        this.arquivo=arquivo;
+        this.arquivo = arquivo;
     }
     
     public String getNomeArquivo() {

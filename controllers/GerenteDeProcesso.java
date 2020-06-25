@@ -1,33 +1,36 @@
 package controllers;
 
-import models.*;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
+import models.*;
 
 public class GerenteDeProcesso {
-    private String[] arquivo;
     private int ID;
-    private Ler l;
-    private CPU cpu;
-    private Queue<PCB> processos;
     private PCB pcb;
+    private Queue<PCB> processos;
     private GerenteMemoria grtMemoria;
     private FilaDeProntos prontos;
-    //private Memoria memoria;
-    //private Semaphore semaSch;
+    private Semaphore semaSch;
+    private Semaphore semaCPU;
     private Escalonador esc;
+    private RotTimer rot;
+    private Memoria memoria;
+    private CPU cpu;
 
-    public GerenteDeProcesso(CPU cpu, Escalonador esc, FilaDeProntos prontos) {
-        processos = new LinkedList<PCB>();
-        //this.semaSch = new Semaphore(0);
-        //this.memoria = new Memoria();
-        this.prontos = prontos;
-        this.grtMemoria = new GerenteMemoria();
-        // this.cpu = new CPU(memoria);
-        this.cpu = cpu;
+    public GerenteDeProcesso() {
         this.ID = -1;
-        this.esc = esc;
+        this.semaSch = new Semaphore(0);
+        this.semaCPU = new Semaphore(0);
+
+        this.processos = new LinkedList<PCB>();
+        this.prontos = new FilaDeProntos();
+        this.rot = new RotTimer(prontos, semaSch);
+
+        this.memoria = new Memoria();
+        this.cpu = new CPU(memoria, rot, semaCPU);
+        this.grtMemoria = new GerenteMemoria();
+        this.esc = new Escalonador(prontos, cpu, semaSch);
     }
 
     public void addProcesso(String nomeArquivo, String[] arquivo) {
@@ -84,58 +87,19 @@ public class GerenteDeProcesso {
         pcb.setEstado(Estado.AGUARDANDO);
     }
 
-   /* public void controlaProcessos() {
-
-        //// vai passar a cpu do primero pcb
-        PCB head = this.pcb_cpu();
-        // pega o arquivo que o processo leu, para mandar para a cpu
-        l = new Ler(head.getNomeArquivo());
-        arquivo = l.criarVetor();
-        // roda a cpu que estava no 1 pcb da fila, se retornar true eh pq o processo
-        // acabou
-
-        // System.out.println("VALOR DO ID:" + head.getID());
-
-        System.out.println("VALOR DO ID:" + head.getID());
-
-        //boolean rodaPrograma = cpu.rodaProg(arquivo, head.getLimiteSup() - 127, head.getLimiteSup() - 1,
-          //      head.getLinhaArq());
-
-        if (rodaPrograma == true) {
-            head.setEstado(Estado.FINALIZADO);
-            processos.remove(head);
-        } else {
-            this.cpu_pcb(head);
-            // caso em que o processo ainda nao foi finalizado.
-            head.setEstado(Estado.AGUARDANDO);
-            // adiciona o processo recem rodado para o final da fila
-            processos.add(head);
-            // remove o processo do comeco da fila
-            processos.remove();
-        }
-        cpu.printMemoria();
-    }
-    */
-
-    public void liberaEscalonador() {       
+    public void liberaEscalonador() throws InterruptedException {
         if (!prontos.isEmpty()) {
 
             System.out.println("run() GP");
-            esc.setSemaphoreBlock();
-            esc.resume();
-            // try {
-            //     System.out.println("WAIT, prontos isEmpty");
-            //     semaSch.acquire();
-            // } catch (InterruptedException e) {
-            //     System.out.println("Interttupet Exception");
-            //     // TODO Auto-generated catch block
-            //     e.printStackTrace();
-            // }
-        }
-        System.out.println("prontos.isEmpty() GP");
+            esc.setSemaphoreUnblock();;
+            this.semaSch.release();
+            this.semaCPU.release();
 
-            // System.out.println("run() GP");
-            // esc.setSemaphoreBlock();
-            // esc.resume();
+        } else {
+            System.out.println("prontos.isEmpty() GP");
+            this.semaSch.acquire();
+            this.semaCPU.acquire();
+            //semaShell.release();
+        }
     }
 }

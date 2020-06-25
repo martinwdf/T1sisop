@@ -2,13 +2,13 @@ package controllers;
 
 import java.util.concurrent.Semaphore;
 
-import models.FilaDeProntos;
-import models.PCB;
+import models.*;
 
 public class RotTimer {
     //Semaphore semaSch;
     private FilaDeProntos prontos;
-    private Escalonador esc;
+    //private Semaphore semaSch;
+    //private Escalonador esc;
     
 
     public RotTimer(FilaDeProntos prontos){
@@ -16,10 +16,10 @@ public class RotTimer {
         this.prontos = prontos;
         //this.esc=esc;
     }
-    public void tratamento(PCB pcb){
-        
+    public void tratamento(PCB pcb) throws InterruptedException {
         prontos.removePronto();
         prontos.addPronto(pcb);
+        //semaSch.release();
         //liberar a thread escalonador...
         //semaSch.notifyAll();
     }

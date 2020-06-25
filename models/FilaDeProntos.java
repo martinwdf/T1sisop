@@ -1,6 +1,7 @@
 package models;
 import java.util.LinkedList;
 import java.util.Queue;
+import models.*;
 
 public class FilaDeProntos {
     private Queue<PCB> prontos;
@@ -24,8 +25,15 @@ public class FilaDeProntos {
             return true;
         }
     }
-    public int getSize(){return prontos.size();}
-    public PCB getHead(){return prontos.peek();}
+
+    public int getSize(){
+        return prontos.size();
+    }
+
+    public PCB getHead(){
+        return prontos.peek();
+    }
+    
     public boolean isEmpty(){
         return prontos.isEmpty();
     }

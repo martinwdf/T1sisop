@@ -2,8 +2,8 @@ package controllers;
 
 import java.util.concurrent.Semaphore;
 
-import models.FilaDeProntos;
-import models.PCB;
+import models.*;
+
 
 public class RotInt {
         Semaphore semaSch;

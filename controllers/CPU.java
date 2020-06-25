@@ -5,36 +5,31 @@ import models.Label;
 import models.Memoria;
 import models.PCB;
 
-public class CPU implements Runnable {
-    private Semaphore semaCPU;
-    // private Semaphore semeTimer;
-    // private Semaphore sema
+public class CPU extends Thread {
 
-    private double[] regs;
-    private String[] s;
-    // private Label[] memoria;
-    private int pc;
-    private int flag;
-    private int i;
-    private boolean estaSuspensa;
-    private Label[] memoria;
+    private Semaphore semaCPU;
     private PCB pcb;
     private RotTimer rot;
     private boolean semaphoreBlock;
+    
+    private String[] s;
+    private int pc;
+    private int i;
+    private double[] regs;
+    private Label[] memoria;
 
-    public CPU(Memoria memoria, RotTimer rot) {
+    public CPU(Memoria memoria, RotTimer rot, Semaphore semaCPU) {
+
+        this.memoria = memoria.getMemoria();
+        this.semaCPU = semaCPU;
 
         this.regs = new double[8];
-        this.memoria = memoria.getMemoria();
         this.pc = 0;
-        this.flag = 0;
         this.i = 0;
-        this.estaSuspensa = true;
         this.rot = rot;
-        this.semaCPU = new Semaphore(1);
         this.semaphoreBlock = true;
-        //this.semaCPU = semaCPU;
-        new Thread(this).start();
+        start();
+
     }
 
     ////////////////////////////////////////////////////////////
@@ -42,62 +37,41 @@ public class CPU implements Runnable {
     public void run() {
         while (true) {
             try {
-                System.out.println("run() try CPU");
+                //System.out.println("run() try CPU");
 
                 if (semaphoreBlock) {
                     semaCPU.acquire();
-                    System.out.println("run() semaCPU.acquire CPU");
-                }
-                synchronized (this) {
-                    while (estaSuspensa) {
-                        wait();
+                    //System.out.println("run() semaCPU.acquire CPU");
+                } else {
+                    semaCPU.release();
+                    //System.out.println("run() CPU");
+                    // rodaProg(getPCB());
+                    boolean b = rodaProg(getPCB());
+                    if (b) {
+                        System.out.println("if(b) CPU");
+                        printMemoria();
+                        setSemaphoreBlock();
+                    } else {
+                        System.out.println("rot.tratamento(getPCB())  CPU");
+                        semaCPU.acquire();
+                        setSemaphoreBlock();
+                        rot.tratamento(getPCB());
                     }
+
                 }
+
             } catch (InterruptedException e) {
                 // TODO: handle exception
                 e.printStackTrace();
             }
-            
-            semaCPU.release();
-            System.out.println("run() CPU");
-            // rodaProg(getPCB());
-            boolean b = rodaProg(getPCB());
-            if(b){
-
-            }
-            else{
-                rot.tratamento(getPCB());
-            }
-           
-          
-            /*
-            * try { semaCPU.acquire(); // semeCPU.wait(); // semeTimer.signal(); //
-                * Thread.sleep(5000);
-             * 
-             * } catch (InterruptedException e) { e.printStackTrace(); }
-             */
-            /*
-             * if (flag == 1) { System.out.println("no Run() DivZero = 1"); // tratamento
-             * flag = 0; } if (flag == 2) {
-             * System.out.println("no Run() EndFormaLimite = 2"); // tratamento flag = 0; }
-             * if (flag == 3) { System.out.println("no Run() STOP = 3"); // tratamento flag
-             * = 0; } if (flag == 4) { System.out.println("no Run() TRAP = 4"); //
-             * tratamento flag = 0; }
-             */
-            
         }
     }
 
-    public void suspend() {
-        this.estaSuspensa = true;
+    public void setSemaphoreBlock() {
+        this.semaphoreBlock = true;
     }
 
-    public synchronized void resume() {
-        this.estaSuspensa = false;
-        notify();
-    }
-
-    public void setSemaphoreBlock(){
+    public void setSemaphoreUnblock() {
         this.semaphoreBlock = false;
     }
 
@@ -105,35 +79,11 @@ public class CPU implements Runnable {
     public synchronized int getPc() {
         return pc;
     }
-
-    public synchronized void setPc(int pc) {
-        this.pc = pc;
-    }
-
+    
     public synchronized Label[] getMemoria() {
         return memoria;
     }
-
-    public synchronized void setMemoria(Label[] memoria) {
-        this.memoria = memoria;
-    }
-
-    public synchronized void setRegs(double[] regs) {
-        this.regs = regs;
-    }
-
-    public synchronized void setPCB(PCB pcb) {
-        this.pcb = pcb;
-    }
-
-    public synchronized void salvaContexto(PCB pcb) {
-        // pcb.printIdPCB();
-        System.out.println("salvaContexto(PCB pcb)");
-        setRegs(pcb.getRegs());
-        setPc(pcb.getPC());
-        setPCB(pcb);
-    }
-
+    
     public synchronized PCB getPCB() {
         return pcb;
     }
@@ -145,6 +95,34 @@ public class CPU implements Runnable {
     public synchronized int getI() {
         return i;
     }
+    
+    public synchronized void setMemoria(Label[] memoria) {
+        this.memoria = memoria;
+    }
+    
+    public synchronized void setPc(int pc) {
+    this.pc = pc;
+    }
+
+    public synchronized void setRegs(double[] regs) {
+    this.regs = regs;
+    }
+
+    public synchronized void setPCB(PCB pcb) {
+    this.pcb = pcb;
+    }
+
+    public synchronized void salvaContexto(PCB pcb) {
+        //System.out.println("salvaContexto(PCB pcb)");
+        setPCB(pcb);
+        setRegs(pcb.getRegs());
+        setPc(pcb.getPC());
+        setSemaphoreUnblock();
+        // this.pcb = pcb;
+        // this.regs = regs;
+        // this.pc = pc;
+    }
+
 
     public synchronized void desalocaMemoria(int n) {
         memoria[n] = null;
@@ -164,7 +142,7 @@ public class CPU implements Runnable {
         int linhaArq = pcb.getLinhaArq();
         int numero = 0;
         i = limiteInf + linhaArq;
-        // System.out.println("VALOR DE linha do arquivo: " + linhaArq);
+        System.out.println("VALOR DE linha do arquivo: " + linhaArq);
         try {
             do {
 
@@ -315,22 +293,18 @@ public class CPU implements Runnable {
             i -= limiteInf;
         } catch (ArithmeticException a) {
             System.out.println("no rodaProg() DivZero = 1");
-            this.flag = 1;
+            // this.flag = 1;
             // a.printStackTrace();
         } catch (ArrayIndexOutOfBoundsException b) {
-            this.flag = 2;
             System.out.println("no rodaProg() EndFormaLimite = 2");
+            // this.flag = 2;
             // b.printStackTrace();
         } catch (RuntimeException c) {
             System.out.println("no rodaProg() STOP = 3");
-            this.flag = 3;
+            // this.flag = 3;
             // c.printStackTrace();
         }
-        // catch (Rxception d) {
-        // System.out.println("TRAP = 4");
-        // this.flag = 4;
-        // c.printStackTrace();
-        // }
+
         setPCB(pcb);
         return false;
         // return actived;

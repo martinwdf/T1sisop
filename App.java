@@ -7,15 +7,17 @@ import models.*;
 public class App extends Thread {
 
     public static void main(String[] args) {
-        GerenteDeProcesso ger;
+        //GerenteDeProcesso ger;
         //Semaphore semaCPU = new Semaphore(0);
         //Semaphore semaSch = new Semaphore(0);
-        FilaDeProntos prontos = new FilaDeProntos();
-        Memoria memoria = new Memoria();
-        RotTimer rot = new RotTimer(prontos);
-        CPU cpu = new CPU(memoria, rot);
-        Escalonador esc = new Escalonador(prontos, cpu);
-        ger = new GerenteDeProcesso(cpu, esc, prontos);
+        //FilaDeProntos prontos = new FilaDeProntos();
+        //Memoria memoria = new Memoria();
+        //RotTimer rot = new RotTimer(prontos);
+        //CPU cpu = new CPU(memoria, rot);
+        //Escalonador esc = new Escalonador(prontos, cpu);
+        //ger = new GerenteDeProcesso(cpu, esc, prontos);
+        GerenteDeProcesso ger = new GerenteDeProcesso();
+
         Shell userShell = new Shell(ger);
         userShell.start();
 
