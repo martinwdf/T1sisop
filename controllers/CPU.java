@@ -17,8 +17,9 @@ public class CPU extends Thread {
     private int i;
     private double[] regs;
     private Label[] memoria;
+    private RotInt rotInt;
 
-    public CPU(Memoria memoria, RotTimer rot, Semaphore semaCPU) {
+    public CPU(Memoria memoria, RotTimer rot, Semaphore semaCPU, RotInt rotInt){
 
         this.memoria = memoria.getMemoria();
         this.semaCPU = semaCPU;
@@ -28,6 +29,7 @@ public class CPU extends Thread {
         this.i = 0;
         this.rot = rot;
         this.semaphoreBlock = true;
+        this.rotInt = rotInt;
         start();
 
     }
@@ -49,7 +51,9 @@ public class CPU extends Thread {
                     boolean b = rodaProg(getPCB());
                     if (b) {
                         System.out.println("if(b) CPU");
-                        printMemoria();
+                        semaCPU.acquire();
+                        setSemaphoreBlock();
+                        rotInt.tratamento();
                         //setSemaphoreBlock();
                     } else {
                         System.out.println("rot.tratamento(getPCB())  CPU");
@@ -114,9 +118,9 @@ public class CPU extends Thread {
 
     public synchronized void salvaContexto(PCB pcb) {
         //System.out.println("salvaContexto(PCB pcb)");
-        setPCB(pcb);
         setRegs(pcb.getRegs());
         setPc(pcb.getPC());
+        setPCB(pcb);
         setSemaphoreUnblock();
         // this.pcb = pcb;
         // this.regs = regs;
@@ -305,6 +309,7 @@ public class CPU extends Thread {
             // c.printStackTrace();
         }
 
+        pcb.setLinhaArq(linhaArq);
         setPCB(pcb);
         return false;
         // return actived;

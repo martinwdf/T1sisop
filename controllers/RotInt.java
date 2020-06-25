@@ -11,21 +11,14 @@ public class RotInt {
         GerenteMemoria gerMem;
         Semaphore semaCPU;
 
-        public RotInt(Semaphore semaSch, FilaDeProntos prontos, GerenteMemoria gerMem, Semaphore semaCPU){
+        public RotInt(FilaDeProntos prontos, Semaphore semaSch){
             this.semaSch = semaSch;
             this.prontos = prontos;
-            this.gerMem = gerMem;
-            this.semaCPU = semaCPU;
+            //this.gerMem = gerMem;
+            //this.semaCPU = semaCPU;
         }
-        public PCB removeFila(PCB pcb){
+        public void tratamento(){
             prontos.removePronto();
-            return pcb;
-        }
-        public void stopCPU(){
-            try {
-                semaCPU.acquire();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
         }
 }

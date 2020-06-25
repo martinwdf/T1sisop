@@ -17,6 +17,7 @@ public class GerenteDeProcesso {
     private RotTimer rot;
     private Memoria memoria;
     private CPU cpu;
+    private RotInt rotInt;
 
     public GerenteDeProcesso() {
         this.ID = -1;
@@ -28,7 +29,8 @@ public class GerenteDeProcesso {
         this.rot = new RotTimer(prontos, semaSch);
 
         this.memoria = new Memoria();
-        this.cpu = new CPU(memoria, rot, semaCPU);
+        this.rotInt = new RotInt(prontos, semaSch);
+        this.cpu = new CPU(memoria, rot, semaCPU, rotInt);
         this.grtMemoria = new GerenteMemoria();
         this.esc = new Escalonador(prontos, cpu, semaSch);
     }
