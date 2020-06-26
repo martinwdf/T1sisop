@@ -35,10 +35,6 @@ public class PCB {
         this.nomeArquivo = nomeArquivo;
     }
 
-    public String getNomeDoArquivo() {
-        return nomeArquivo;
-    }
-
     public int getLinhaArq() {
         return linhaArq;
     }

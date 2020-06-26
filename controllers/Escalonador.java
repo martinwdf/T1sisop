@@ -48,6 +48,8 @@ public class Escalonador extends Thread {
                 } 
 
             } catch (InterruptedException e) {
+                System.out.println("Escalonador finalizado.");
+
                 // TODO: handle exception
                 e.printStackTrace();
             } finally {

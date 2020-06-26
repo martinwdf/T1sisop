@@ -6,13 +6,13 @@ import java.util.concurrent.Semaphore;
 import models.*;
 
 public class GerenteDeProcesso {
+    private Semaphore semaSch;
+    private Semaphore semaCPU;
     private int ID;
     private PCB pcb;
     private Queue<PCB> processos;
     private GerenteMemoria grtMemoria;
     private FilaDeProntos prontos;
-    private Semaphore semaSch;
-    private Semaphore semaCPU;
     private Escalonador esc;
     private RotTimer rot;
     private Memoria memoria;
@@ -96,12 +96,23 @@ public class GerenteDeProcesso {
             esc.setSemaphoreUnblock();;
             this.semaSch.release();
             this.semaCPU.release();
+            cpu.printMemoria();
 
         } else {
             System.out.println("prontos.isEmpty() GP");
             this.semaSch.acquire();
             this.semaCPU.acquire();
             //semaShell.release();
+        }
+    }
+
+    public void interruptGP() {
+
+        try {  
+            esc.interrupt();
+            cpu.interrupt();
+        } catch (Exception e) {
+            System.out.println("Programa finalizado.");
         }
     }
 }
