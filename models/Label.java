@@ -28,42 +28,26 @@ public class Label {
 
     /////////////////// getters and setters
 
-    public String getRd() {
-        return rd;
-    }
-    public void setRd(String rd) {
-        this.rd = rd;
-    }
+    public String getRd() { return rd; }
 
-    public String getRs() {
-        return rs;
-    }
-    public void setRs(String rs) {
-        this.rs = rs;
-    }
+    public void setRd(String rd) { this.rd = rd; }
 
-    public double getParametro() {
-        return parametro;
-    }
-    public void setParametro(double parametro) {
-        this.parametro = parametro;
-    }
+    public String getRs() { return rs; }
 
-    public String[] getReg() {
-        return reg;
-    }
-    public void setReg(String[] reg) {
-        this.reg = reg;
-    }
+    public void setRs(String rs) { this.rs = rs; }
 
-    public String getOpcode() {
-        return opcode;
-    }
+    public double getParametro() { return parametro; }
+
+    public void setParametro(double parametro) { this.parametro = parametro; }
+
+    public String[] getReg() { return reg; }
+
+    public void setReg(String[] reg) { this.reg = reg; }
+
+    public String getOpcode() { return opcode; }
 
     /////////////////////
-    public void printOpcode() {
-        System.out.println(opcode);
-    }
+    public void printOpcode() { System.out.println(opcode); }
 
     public int findRD() {
         int i = 0, j = 0;

@@ -8,6 +8,7 @@ import models.*;
 public class GerenteDeProcesso {
     private Semaphore semaSch;
     private Semaphore semaCPU;
+
     private int ID;
     private PCB pcb;
     private Queue<PCB> processos;
@@ -39,14 +40,9 @@ public class GerenteDeProcesso {
         criaProcesso(nomeArquivo, arquivo);
     }
 
-    public int getSize() {
-        return processos.size();
-    }
+    public int getSize() { return processos.size(); }
 
-    public int criaID() {
-        ID++;
-        return ID;
-    }
+    public int criaID() { return ID++; }
 
     public void criaProcesso(String nomeArquivo, String[] arquivo) {
         if (processos.size() == 0) {
@@ -92,17 +88,18 @@ public class GerenteDeProcesso {
     public void liberaEscalonador() throws InterruptedException {
         if (!prontos.isEmpty()) {
 
-            System.out.println("run() GP");
+            // System.out.println("run() GP");
             esc.setSemaphoreUnblock();;
             this.semaSch.release();
             this.semaCPU.release();
             cpu.printMemoria();
 
         } else {
-            System.out.println("prontos.isEmpty() GP");
+            // >>>>> NUNCA CHEGA AQUI >>>>> System.out.println("prontos.isEmpty() GP");
             this.semaSch.acquire();
             this.semaCPU.acquire();
-            //semaShell.release();
+            //semaShell.release();  
+            // cpu.printMemoria();
         }
     }
 
@@ -111,8 +108,9 @@ public class GerenteDeProcesso {
         try {  
             esc.interrupt();
             cpu.interrupt();
-        } catch (Exception e) {
             System.out.println("Programa finalizado.");
+        } catch (Exception e) {
+            System.out.println("Ocorreu um erro ao finalizar o programa. Chame um Engenheiro de Software!");
         }
     }
 }

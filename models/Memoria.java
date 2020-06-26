@@ -6,11 +6,10 @@ public class Memoria {
     public Memoria(){
         memoria = new Label[1024];
     }
-    public Label[] getMemoria(){return memoria;}
 
-    public void setMemoria(Label[] memoria){
-        this.memoria = memoria;
-    }
+    public Label[] getMemoria(){ return memoria; }
+
+    public void setMemoria(Label[] memoria){ this.memoria = memoria; }
 
     public String toString(){
         String s ="";

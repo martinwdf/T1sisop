@@ -48,8 +48,6 @@ public class Escalonador extends Thread {
                 } 
 
             } catch (InterruptedException e) {
-                System.out.println("Escalonador finalizado.");
-
                 // TODO: handle exception
                 e.printStackTrace();
             } finally {
@@ -61,20 +59,16 @@ public class Escalonador extends Thread {
     }
 
 
-    public void setSemaphoreBlock() {
-        this.semaphoreBlock = true;
-    }
+    public void setSemaphoreBlock() { this.semaphoreBlock = true; }
 
-    public void setSemaphoreUnblock() {
-        this.semaphoreBlock = false;
-    }
+    public void setSemaphoreUnblock() { this.semaphoreBlock = false; }
 
     public synchronized void rodaProcesso() {
         // manda a head da fila de prontos para cpu, e depois atualiza a cpu do pcb.
-        //System.out.println("rodaProcesso() Escalonador");
-        //PCB pcb = prontos.getHead();
-        //System.out.println(pcb.getArquivo()[1] + "tamanho lista:" + prontos.getSize());
         cpu.salvaContexto(prontos.getHead());
+        // System.out.println("rodaProcesso() Escalonador");
+        // PCB pcb = prontos.getHead();
+        // System.out.println(pcb.getArquivo()[1] + "tamanho lista:" + prontos.getSize());
         // boolean rodaPrograma = cpu.rodaProg(arquivo, head.getLimiteSup() - 127,
         // head.getLimiteSup() - 1,head.getLinhaArq());
     }

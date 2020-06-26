@@ -9,6 +9,12 @@ public class FilaDeProntos {
     public FilaDeProntos() {
         prontos = new LinkedList<PCB>();
     }
+    
+    public int getSize() { return prontos.size(); }
+
+    public PCB getHead() { return prontos.peek(); }
+
+    public boolean isEmpty() { return prontos.isEmpty(); }
 
     public boolean addPronto(PCB pcb) {
         // porque 8? <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -27,20 +33,8 @@ public class FilaDeProntos {
         }
     }
 
-    public int getSize() {
-        return prontos.size();
-    }
-
-    public PCB getHead() {
-        return prontos.peek();
-    }
-
-    public boolean isEmpty() {
-        return prontos.isEmpty();
-    }
 
     public static void printFilaDeProntos() {
-
         for (PCB pcb : prontos) {
             System.out.println("Process Id: " + pcb.getID() + "/ Nome: " + pcb.getNomeArquivo() + "/ Estado: " + pcb.getEstado());
         }
