@@ -9,9 +9,10 @@ public class RotTimer {
     private FilaDeProntos prontos;
     private Semaphore semaSch;
     //private Escalonador esc;
+    //private Escalonador esc;
     
 
-    public RotTimer(FilaDeProntos prontos, Semaphore semaSch){
+    public RotTimer(FilaDeProntos prontos, Semaphore semaSch ){
         this.semaSch = semaSch;
         this.prontos = prontos;
         //this.esc=esc;
@@ -21,7 +22,9 @@ public class RotTimer {
         prontos.removePronto();
         prontos.addPronto(pcb);
         System.out.println("Processo "+ pcb.getID() +" movido para o final da fila");
+        GerenteDeProcesso.esc.setSemaphoreUnblock();
         semaSch.release();
+        
         //liberar a thread escalonador...
         //semaSch.notifyAll();
     }

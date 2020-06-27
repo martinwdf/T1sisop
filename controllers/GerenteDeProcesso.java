@@ -14,7 +14,7 @@ public class GerenteDeProcesso {
     private Queue<PCB> processos;
     private GerenteMemoria grtMemoria;
     private FilaDeProntos prontos;
-    private Escalonador esc;
+    static Escalonador esc;
     private RotTimer rot;
     private Memoria memoria;
     private CPU cpu;
@@ -27,13 +27,14 @@ public class GerenteDeProcesso {
 
         this.processos = new LinkedList<PCB>();
         this.prontos = new FilaDeProntos();
-        this.rot = new RotTimer(prontos, semaSch);
 
-        this.memoria = new Memoria();
+        this.rot = new RotTimer(prontos, semaSch);
         this.rotInt = new RotInt(prontos, semaSch);
+        
+        this.memoria = new Memoria();
         this.cpu = new CPU(memoria, rot, semaCPU, rotInt);
+        esc = new Escalonador(prontos, cpu, semaSch);
         this.grtMemoria = new GerenteMemoria();
-        this.esc = new Escalonador(prontos, cpu, semaSch);
     }
 
     public void addProcesso(String nomeArquivo, String[] arquivo) throws InterruptedException {
@@ -62,9 +63,11 @@ public class GerenteDeProcesso {
             processos.add(pcb);
            if(!prontos.addPronto(pcb)){
                System.out.println("Fila de Prontos esta cheia!");
-               while(prontos.getSize()>=3){
+               while(prontos.getSize()!=0){
+                   //System.out.println("PRINT >=3");
                    this.liberaEscalonador();
                }
+               System.out.println("FINAL GETSIZE " + prontos.getSize());
 
            }
            else{

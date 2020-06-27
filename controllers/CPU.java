@@ -249,6 +249,8 @@ public class CPU extends Thread {
                                 System.out.println("STOP");
                                 mem.setMemoria(this.memoria);
                                 b = true;
+                                numero = 10000;
+                                continue;
 
                             default:
                                 throw new IllegalArgumentException(
@@ -260,7 +262,7 @@ public class CPU extends Thread {
                         linhaArq++;
                         setPc(linhaArq);
 
-                    } while ((i >= limiteInf && i < limiteSup) && numero < 8);
+                    } while ((i >= limiteInf && i < limiteSup) && numero < 400);
                     i -= limiteInf;
 
                     pcb.setLinhaArq(linhaArq);
@@ -268,7 +270,6 @@ public class CPU extends Thread {
                     setPCB(pcb);
                     mem.setMemoria(this.memoria);
                     
-                    b = false;
                     // return actived;
 
                     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -567,6 +568,7 @@ public class CPU extends Thread {
 
         pcb.setLinhaArq(linhaArq);
         setPCB(pcb);
+
         return false;
         // return actived;
 

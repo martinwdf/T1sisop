@@ -25,6 +25,7 @@ public class RotInt {
         }
             System.out.println("Funcao de tratamento, processo removido da fila de prontos");
             prontos.removePronto();
+            GerenteDeProcesso.esc.setSemaphoreUnblock();
             semaSch.release();
 
         }
