@@ -17,8 +17,10 @@ public class RotTimer {
         //this.esc=esc;
     }
     public void tratamento(PCB pcb) throws InterruptedException {
+        semaSch.acquire();
         prontos.removePronto();
         prontos.addPronto(pcb);
+        System.out.println("Processo "+ pcb.getID() +" movido para o final da fila");
         semaSch.release();
         //liberar a thread escalonador...
         //semaSch.notifyAll();

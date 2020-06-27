@@ -20,12 +20,14 @@ public class CPU extends Thread {
     private int i;
     private double[] regs;
     private Label[] memoria;
+    private Memoria mem;
 
     public CPU(Memoria memoria, RotTimer rotTimer, Semaphore semaCPU, RotInt rotInt) {
 
         this.timerCPU = new Timer();
         this.memoria = memoria.getMemoria();
         this.semaCPU = semaCPU;
+        this.mem=memoria;
 
         this.limiteDeInstrucoes = 0;
         this.semaphoreBlock = true;
@@ -46,7 +48,7 @@ public class CPU extends Thread {
         while (true) {
             try {
                 // System.out.println("run() try CPU");
-                System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+               // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 if (semaphoreBlock) {
                     semaCPU.acquire();
@@ -74,9 +76,9 @@ public class CPU extends Thread {
                         //     // rotina de tratamento de IO");
                         // }
 
-                        if (timerCPU.contaTempo(limiteDeInstrucoes)) {
-                            timerCPU();
-                        }
+                      //  if (timerCPU.contaTempo(limiteDeInstrucoes)) {
+                      //      timerCPU();
+                      //  }
 
                         s = arquivo[linhaArq].split(" ");
                         // System.out.println(arquivo[i]);
@@ -198,7 +200,7 @@ public class CPU extends Thread {
 
                                 // System.out.println(memoria[i].print() + " Linha: " + i);
 
-                                System.out.println(memoria[i].print() + " Linha: " + i);
+                              //  System.out.println(memoria[i].print() + " Linha: " + i);
                                 limiteDeInstrucoes++;
                                 break;
 
@@ -211,7 +213,7 @@ public class CPU extends Thread {
 
                                 // System.out.println(regs[memoria[i].findRD()]);
 
-                                System.out.println(regs[memoria[i].findRD()]);
+                               // System.out.println(regs[memoria[i].findRD()]);
                                 limiteDeInstrucoes++;
                                 break;
 
@@ -223,7 +225,7 @@ public class CPU extends Thread {
                                 memoria[i] = new Label("STX", s[1], s[2]);
                                 int l = (int) regs[memoria[i].findRD()] + limiteInf;
                                 memoria[l] = new Label("DADO", regs[memoria[i].findRS()]);
-                                System.out.println(memoria[i].print() + " Linha: " + i);
+                               // System.out.println(memoria[i].print() + " Linha: " + i);
                                 limiteDeInstrucoes++;
                                 break;
 
@@ -237,14 +239,15 @@ public class CPU extends Thread {
                                 // System.out.println("LDX | " + " REGS: " + memoria[i].findRD() + " " +
                                 // regs[memoria[i].findRD()]);
 
-                                System.out.println(
-                                        "LDX | " + " REGS: " + memoria[i].findRD() + " " + regs[memoria[i].findRD()]);
+                               // System.out.println(
+                                //        "LDX | " + " REGS: " + memoria[i].findRD() + " " + regs[memoria[i].findRD()]);
                                 limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction stop
                             case "STOP":
                                 System.out.println("STOP");
+                                mem.setMemoria(this.memoria);
                                 b = true;
 
                             default:
@@ -257,11 +260,14 @@ public class CPU extends Thread {
                         linhaArq++;
                         setPc(linhaArq);
 
-                    } while ((i >= limiteInf && i < limiteSup) && numero < 15);
+                    } while ((i >= limiteInf && i < limiteSup) && numero < 8);
                     i -= limiteInf;
 
                     pcb.setLinhaArq(linhaArq);
+                    System.out.println(mem.toString());
                     setPCB(pcb);
+                    mem.setMemoria(this.memoria);
+                    
                     b = false;
                     // return actived;
 
@@ -485,7 +491,7 @@ public class CPU extends Thread {
 
                     // System.out.println(memoria[i].print() + " Linha: " + i);
 
-                    System.out.println(memoria[i].print() + " Linha: " + i);
+                   // System.out.println(memoria[i].print() + " Linha: " + i);
                     limiteDeInstrucoes++;
                     // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
@@ -567,7 +573,9 @@ public class CPU extends Thread {
     }
 
     public void printMemoria() {
-        String s = "";
+        System.out.println(mem.toString());
+         
+      /*  String s = "";
 
         for (int i = 0; i < 300; i++) {
 
@@ -577,8 +585,9 @@ public class CPU extends Thread {
 
             System.out.println("["+ s + i + "]" + " ");
             if (memoria[i] != null) {
-                System.out.println("["+ s + i + "]" + " " + memoria[i].print());
+                System.out.println("["+ s + i + "]" + " " + memoria[i]);
             }
         }
+        */
     }
 }

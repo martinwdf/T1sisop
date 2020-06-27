@@ -44,6 +44,7 @@ public class Escalonador extends Thread {
                     //System.out.println("run() Escalonador");
                     rodaProcesso();
                     //cpu.setSemaphoreUnblock();
+                    setSemaphoreBlock();
                     semaSch.acquire();
                 } 
 
@@ -65,6 +66,8 @@ public class Escalonador extends Thread {
 
     public synchronized void rodaProcesso() {
         // manda a head da fila de prontos para cpu, e depois atualiza a cpu do pcb.
+       // System.out.println("PRINTOU");
+        prontos.printFilaDeProntos();
         cpu.salvaContexto(prontos.getHead());
         // System.out.println("rodaProcesso() Escalonador");
         // PCB pcb = prontos.getHead();

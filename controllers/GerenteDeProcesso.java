@@ -36,7 +36,7 @@ public class GerenteDeProcesso {
         this.esc = new Escalonador(prontos, cpu, semaSch);
     }
 
-    public void addProcesso(String nomeArquivo, String[] arquivo) {
+    public void addProcesso(String nomeArquivo, String[] arquivo) throws InterruptedException {
         criaProcesso(nomeArquivo, arquivo);
     }
 
@@ -44,7 +44,7 @@ public class GerenteDeProcesso {
 
     public int criaID() { return ID++; }
 
-    public void criaProcesso(String nomeArquivo, String[] arquivo) {
+    public void criaProcesso(String nomeArquivo, String[] arquivo) throws InterruptedException {
         if (processos.size() == 0) {
             grtMemoria.primeiroLivre();
             pcb = new PCB(0, nomeArquivo, arquivo);
@@ -53,13 +53,23 @@ public class GerenteDeProcesso {
             pcb.setLimiteInf(pcb.getLimiteSup() - 127);
             processos.add(pcb);
             prontos.addPronto(pcb);
+            System.out.println("Processo adicionado na particao: " + pcb.getID());
             //pcb.printIdPCB();
         } else {
             pcb = new PCB(grtMemoria.primeiroLivre(), nomeArquivo, arquivo);
             pcb.setLimiteSup(grtMemoria.alocar(pcb.getID()) - 1);
             pcb.setLimiteInf(pcb.getLimiteSup() - 127);
             processos.add(pcb);
-            prontos.addPronto(pcb);
+           if(!prontos.addPronto(pcb)){
+               System.out.println("Fila de Prontos esta cheia!");
+               while(prontos.getSize()>=3){
+                   this.liberaEscalonador();
+               }
+
+           }
+           else{
+                System.out.println("Processo adicionado na particao: " + pcb.getID());
+           }
         }
     }
 
@@ -70,7 +80,8 @@ public class GerenteDeProcesso {
         return pcb;
     }
 
-    public PCB pcb_cpu() {
+    //nao estao mais sendo utilizadas
+    /*public PCB pcb_cpu() {
         PCB pcb = processos.element();
         cpu.setPc(pcb.getPC());
         cpu.setRegs(pcb.getRegs());
@@ -84,7 +95,7 @@ public class GerenteDeProcesso {
         pcb.setRegs(cpu.getRegs());
         pcb.setEstado(Estado.AGUARDANDO);
     }
-
+*/
     public void liberaEscalonador() throws InterruptedException {
         if (!prontos.isEmpty()) {
 
@@ -92,7 +103,7 @@ public class GerenteDeProcesso {
             esc.setSemaphoreUnblock();;
             this.semaSch.release();
             this.semaCPU.release();
-            cpu.printMemoria();
+           // cpu.printMemoria();
 
         } else {
             // >>>>> NUNCA CHEGA AQUI >>>>> System.out.println("prontos.isEmpty() GP");

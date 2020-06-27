@@ -34,9 +34,9 @@ public class FilaDeProntos {
     }
 
 
-    public static void printFilaDeProntos() {
+    public void printFilaDeProntos() {
         for (PCB pcb : prontos) {
-            System.out.println("Process Id: " + pcb.getID() + "/ Nome: " + pcb.getNomeArquivo() + "/ Estado: " + pcb.getEstado());
+            System.out.println("Process Id: " + pcb.getID() + "/ Nome: " + pcb.getNomeArquivo());
         }
     }
 }

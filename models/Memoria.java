@@ -12,11 +12,22 @@ public class Memoria {
     public void setMemoria(Label[] memoria){ this.memoria = memoria; }
 
     public String toString(){
-        String s ="";
-        for(int i=0; i < 1024; i++ ){
-            s = memoria[i].print();
+        String str ="";
+                String s = "";
+
+        for (int i = 0; i < 384; i++) {
+
+            if (i < 10){ s =  "00"; } 
+            else if (i < 100) { s = "0"; } 
+            else { s = ""; }
+
+            str+="["+ s + i + "]" + " " +"\n";
+            if (memoria[i] != null) {
+                str+="["+ s + i + "]" + " " + memoria[i].print()+"\n";
+            }
         }
-        return s;
+        
+        return str;
     }
 
 }
