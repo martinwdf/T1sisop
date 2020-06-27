@@ -17,16 +17,12 @@ public class RotInt {
         // this.semaCPU = semaCPU;
     }
 
-    public void tratamento() {
-        try {
-            semaSch.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-            System.out.println("Funcao de tratamento, processo removido da fila de prontos");
-            prontos.removePronto();
-            GerenteDeProcesso.esc.setSemaphoreUnblock();
-            semaSch.release();
+    public void tratamento() throws InterruptedException  {
+        //semaSch.acquire();
+        System.out.println("Funcao de tratamento RotInt: processo ID " + prontos.getHead().getID() +" removido da fila de prontos");
+        prontos.removePronto();
+        GerenteDeProcesso.esc.setSemaphoreUnblock();
+        semaSch.release();
 
-        }
+    }
 }

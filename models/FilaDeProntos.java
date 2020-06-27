@@ -33,10 +33,16 @@ public class FilaDeProntos {
         }
     }
 
-
     public void printFilaDeProntos() {
-        for (PCB pcb : prontos) {
-            System.out.println("Process Id: " + pcb.getID() + "/ Nome: " + pcb.getNomeArquivo());
+        try {
+            for (PCB pcb : prontos) {
+                System.out.println("Process ID: " + pcb.getID() + " | Nome: " + pcb.getNomeArquivo());
+            }
+        } catch (Exception e) {
+            //TODO: handle exception
+            System.out.println("Erro no ForEach do prontFilaDeProntos()");
+            e.printStackTrace();
         }
+        
     }
 }

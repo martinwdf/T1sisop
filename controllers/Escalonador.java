@@ -14,7 +14,7 @@ public class Escalonador extends Thread {
     private boolean semaphoreBlock;
 
     public Escalonador(FilaDeProntos prontos, CPU cpu, Semaphore semaSch) {
-        //this.processos = processos;
+        // this.processos = processos;
         // this.semaCPU = new Semaphore(0);
         this.prontos = prontos;
         // this.semaSch = new Semaphore(1);
@@ -34,19 +34,28 @@ public class Escalonador extends Thread {
         while (true) {
             // semaSch.release();
             try {
-                //System.out.println("run() try Escalonador");
+                // System.out.println("run() try Escalonador");
 
                 if (semaphoreBlock) {
                     semaSch.acquire();
-                    //.out.println("run() semaSch.acquire Escalonador");
+                    // .out.println("run() semaSch.acquire Escalonador");
                 } else {
                     semaSch.release();
-                    //System.out.println("run() Escalonador");
+
+                    // if(!prontos.isEmpty()){
+                    try {
+                        sleep(1000);
+                        prontos.printFilaDeProntos();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    // }
+                    // System.out.println("run() Escalonador");
+                    // setSemaphoreBlock();
                     rodaProcesso();
-                    //cpu.setSemaphoreUnblock();
-                    setSemaphoreBlock();
-                    semaSch.acquire();
-                } 
+                    // cpu.setSemaphoreUnblock();
+                    // semaSch.acquire();
+                }
 
             } catch (InterruptedException e) {
                 // TODO: handle exception
@@ -59,19 +68,25 @@ public class Escalonador extends Thread {
 
     }
 
+    public void setSemaphoreBlock() {
+        this.semaphoreBlock = true;
+    }
 
-    public void setSemaphoreBlock() { this.semaphoreBlock = true; }
-
-    public void setSemaphoreUnblock() { this.semaphoreBlock = false; }
+    public void setSemaphoreUnblock() {
+        this.semaphoreBlock = false;
+    }
 
     public synchronized void rodaProcesso() {
         // manda a head da fila de prontos para cpu, e depois atualiza a cpu do pcb.
-         System.out.println("PRINTOU");
-        prontos.printFilaDeProntos();
+        // System.out.println("PRINT rodaProcesso()");
+
+        setSemaphoreBlock();
         cpu.salvaContexto(prontos.getHead());
+
         // System.out.println("rodaProcesso() Escalonador");
         // PCB pcb = prontos.getHead();
-        // System.out.println(pcb.getArquivo()[1] + "tamanho lista:" + prontos.getSize());
+        // System.out.println(pcb.getArquivo()[1] + "tamanho lista:" +
+        // prontos.getSize());
         // boolean rodaPrograma = cpu.rodaProg(arquivo, head.getLimiteSup() - 127,
         // head.getLimiteSup() - 1,head.getLinhaArq());
     }

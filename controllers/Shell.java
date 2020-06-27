@@ -74,35 +74,41 @@ public class Shell extends Thread {
             System.out.println("1 - P1 | 2 - P2 | 3 - P3 | 4 - P4 | 0 - Sair\n");
 
             opc = scan.nextInt();
-try{
+            try{
+                switch (opc) {
+                    case 1:
+                    optionMenu("p1.txt");
+                    // optionMenu("P1.txt");
 
-            switch (opc) {
-                case 1:
-                optionMenu("p1.txt");
-                break;
-                case 2:
-                optionMenu("p2.txt");
-                break;
-                case 3:
-                optionMenu("p3.txt");
-                break;
-                case 4:
-                optionMenu("p4.txt");
-                break;
-                case 0:
-                
-                ger.interruptGP();
-                Sair();
-                System.exit(0);
-                return;
-                
-                default:
-                System.out.println("Opcao Invalida.");
-                break;
+                    break;
+                    case 2:
+                    optionMenu("p2.txt");
+                    // optionMenu("P2.txt");
+
+                    break;
+                    case 3:
+                    optionMenu("p3.txt");
+                    // optionMenu("P3.txt");
+
+                    break;
+                    case 4:
+                    optionMenu("p4.txt");
+                    // optionMenu("P4.txt");
+                    break;
+                    case 0:
+                    
+                    ger.interruptGP();
+                    Sair();
+                    System.exit(0);
+                    return;
+                    
+                    default:
+                    System.out.println("Opcao Invalida.");
+                    break;
+                }
+            }catch(InterruptedException e){
+                e.printStackTrace();
             }
-        }catch(InterruptedException e){
-            e.printStackTrace();
-        }
         }
     }
 

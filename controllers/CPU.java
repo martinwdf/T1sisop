@@ -1,6 +1,8 @@
 package controllers;
 
 import java.util.concurrent.Semaphore;
+
+import models.FilaDeProntos;
 import models.Label;
 import models.Memoria;
 import models.PCB;
@@ -11,26 +13,29 @@ public class CPU extends Thread {
     private PCB pcb;
     private RotTimer rotTimer;
     private RotInt rotInt;
-    private Timer timerCPU;
+    // private Timer timerCPU;
 
-    private int limiteDeInstrucoes;
+    // // private int limiteDeInstrucoes;
+    private boolean stop;
     private boolean semaphoreBlock;
     private String[] s;
     private int pc;
     private int i;
     private double[] regs;
     private Label[] memoria;
-    private Memoria mem;
+    private FilaDeProntos prontos;
+    private Memoria memo;
 
-    public CPU(Memoria memoria, RotTimer rotTimer, Semaphore semaCPU, RotInt rotInt) {
+    public CPU(Memoria memoria, RotTimer rotTimer, Semaphore semaCPU, RotInt rotInt, FilaDeProntos prontos) {
 
-        this.timerCPU = new Timer();
+        // this.timerCPU = new Timer();
         this.memoria = memoria.getMemoria();
+        this.memo = memoria;
         this.semaCPU = semaCPU;
-        this.mem=memoria;
 
-        this.limiteDeInstrucoes = 0;
+        // this.limiteDeInstrucoes = 0;
         this.semaphoreBlock = true;
+        this.stop = true;
 
         this.regs = new double[8];
         this.pc = 0;
@@ -38,6 +43,7 @@ public class CPU extends Thread {
 
         this.rotTimer = rotTimer;
         this.rotInt = rotInt;
+        this.prontos = prontos;
         start();
 
     }
@@ -48,7 +54,7 @@ public class CPU extends Thread {
         while (true) {
             try {
                 // System.out.println("run() try CPU");
-               // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 if (semaphoreBlock) {
                     semaCPU.acquire();
@@ -58,7 +64,6 @@ public class CPU extends Thread {
                     // System.out.println("run() CPU");
                     // rodaProg(getPCB());
                     // boolean b = rodaProg(getPCB());
-                    boolean b = false;
 
                     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -68,17 +73,17 @@ public class CPU extends Thread {
                     int linhaArq = pcb.getLinhaArq();
                     int numero = 0;
                     i = limiteInf + linhaArq;
-                    System.out.println("VALOR DE linha do arquivo: " + linhaArq);
+                    // System.out.println("VALOR de linha do arquivo: " + linhaArq);
 
                     do {
-
+                        // while (((i >= limiteInf && i < limiteSup) && numero < 400) || !b) {
                         // if (s[0] == "TRAP") {
-                        //     // rotina de tratamento de IO");
+                        // // rotina de tratamento de IO");
                         // }
 
-                      //  if (timerCPU.contaTempo(limiteDeInstrucoes)) {
-                      //      timerCPU();
-                      //  }
+                        // if (timerCPU.contaTempo(limiteDeInstrucoes)) {
+                        // timerCPU();
+                        // }
 
                         s = arquivo[linhaArq].split(" ");
                         // System.out.println(arquivo[i]);
@@ -90,7 +95,7 @@ public class CPU extends Thread {
                                 regs[memoria[i].findRD()] = regs[memoria[i].findRD()] + regs[memoria[i].findRS()];
                                 // System.out.println("ADD | " + " REGS: " + memoria[i].findRD() + " " +
                                 // regs[memoria[i].findRD()]);
-                                limiteDeInstrucoes++;
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction sub
@@ -99,7 +104,7 @@ public class CPU extends Thread {
                                 regs[memoria[i].findRD()] = regs[memoria[i].findRD()] - regs[memoria[i].findRS()];
                                 // System.out.println("SUB | " + " REGS: " + memoria[i].findRD() + " " +
                                 // regs[memoria[i].findRD()]);
-                                limiteDeInstrucoes++;
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction mult
@@ -108,7 +113,7 @@ public class CPU extends Thread {
                                 regs[memoria[i].findRD()] = regs[memoria[i].findRD()] * regs[memoria[i].findRS()];
                                 // System.out.println("MULT | " + " REGS: " + memoria[i].findRD() + " " +
                                 // regs[memoria[i].findRD()]);
-                                limiteDeInstrucoes++;
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction ADDi
@@ -117,7 +122,7 @@ public class CPU extends Thread {
                                 regs[memoria[i].findRD()] = regs[memoria[i].findRD()] + Double.parseDouble(s[2]);
                                 // System.out.println("ADDI | " + " REGS: " + memoria[i].findRD() + " " +
                                 // regs[memoria[i].findRD()]);
-                                limiteDeInstrucoes++;
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction subi
@@ -126,7 +131,7 @@ public class CPU extends Thread {
                                 regs[memoria[i].findRD()] = regs[memoria[i].findRD()] - Double.parseDouble(s[2]);
                                 // System.out.println("SUBI | " + " REGS: " + memoria[i].findRD() + " " +
                                 // regs[memoria[i].findRD()]);
-                                limiteDeInstrucoes++;
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction ldi
@@ -135,7 +140,7 @@ public class CPU extends Thread {
                                 regs[memoria[i].findRD()] = Double.parseDouble(s[2]);
                                 // System.out.println("LDI | " + " REGS: " + memoria[i].findRD() + " " +
                                 // regs[memoria[i].findRD()]);
-                                limiteDeInstrucoes++;
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction jmp
@@ -144,7 +149,7 @@ public class CPU extends Thread {
                                 linhaArq = (int) regs[memoria[i].findRD()] - 1;
                                 i = Integer.parseInt(s[1]) - 1 + limiteInf;
                                 // System.out.println(memoria[i].print() + " Linha: " + i);
-                                limiteDeInstrucoes++;
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction jmpi
@@ -153,7 +158,7 @@ public class CPU extends Thread {
                                 linhaArq = (int) regs[memoria[i].findRD()] - 1;
                                 i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
                                 // System.out.println(memoria[i].print() + " Linha: " + i);
-                                limiteDeInstrucoes++;
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction jmpig
@@ -164,7 +169,7 @@ public class CPU extends Thread {
                                     i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
                                 }
                                 // System.out.println(memoria[i].print() + " Linha: " + i);
-                                limiteDeInstrucoes++;
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction jmpil
@@ -175,7 +180,7 @@ public class CPU extends Thread {
                                     i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
                                 }
                                 // System.out.println(memoria[i].print() + " Linha: " + i);
-                                limiteDeInstrucoes++;
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction jmpie
@@ -186,7 +191,7 @@ public class CPU extends Thread {
                                     i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
                                 }
                                 // System.out.println(memoria[i].print() + " Linha: " + i);
-                                limiteDeInstrucoes++;
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction std
@@ -200,8 +205,8 @@ public class CPU extends Thread {
 
                                 // System.out.println(memoria[i].print() + " Linha: " + i);
 
-                              //  System.out.println(memoria[i].print() + " Linha: " + i);
-                                limiteDeInstrucoes++;
+                                // System.out.println(memoria[i].print() + " Linha: " + i);
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction ldd
@@ -213,8 +218,8 @@ public class CPU extends Thread {
 
                                 // System.out.println(regs[memoria[i].findRD()]);
 
-                               // System.out.println(regs[memoria[i].findRD()]);
-                                limiteDeInstrucoes++;
+                                // System.out.println(regs[memoria[i].findRD()]);
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction stdx
@@ -225,8 +230,8 @@ public class CPU extends Thread {
                                 memoria[i] = new Label("STX", s[1], s[2]);
                                 int l = (int) regs[memoria[i].findRD()] + limiteInf;
                                 memoria[l] = new Label("DADO", regs[memoria[i].findRS()]);
-                               // System.out.println(memoria[i].print() + " Linha: " + i);
-                                limiteDeInstrucoes++;
+                                // System.out.println(memoria[i].print() + " Linha: " + i);
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction ldx rd <- [rs]
@@ -239,18 +244,17 @@ public class CPU extends Thread {
                                 // System.out.println("LDX | " + " REGS: " + memoria[i].findRD() + " " +
                                 // regs[memoria[i].findRD()]);
 
-                               // System.out.println(
-                                //        "LDX | " + " REGS: " + memoria[i].findRD() + " " + regs[memoria[i].findRD()]);
-                                limiteDeInstrucoes++;
+                                // System.out.println("LDX | " + " REGS: " + memoria[i].findRD() + " " +
+                                // regs[memoria[i].findRD()]);
+                                // limiteDeInstrucoes++;
                                 break;
 
                             //////////// intruction stop
                             case "STOP":
                                 System.out.println("STOP");
-                                mem.setMemoria(this.memoria);
-                                b = true;
-                                numero = 10000;
-                                continue;
+                                stop = false;
+                                // numero = 1000;
+                                break;
 
                             default:
                                 throw new IllegalArgumentException(
@@ -262,29 +266,28 @@ public class CPU extends Thread {
                         linhaArq++;
                         setPc(linhaArq);
 
-                    } while ((i >= limiteInf && i < limiteSup) && numero < 400);
+                    } while (stop && (i >= limiteInf && i < limiteSup) && numero < 400 );
+                    // }
                     i -= limiteInf;
 
                     pcb.setLinhaArq(linhaArq);
-                    System.out.println(mem.toString());
                     setPCB(pcb);
-                    mem.setMemoria(this.memoria);
-                    
-                    // return actived;
 
-                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    if (b) {
-                        System.out.println("if(b) CPU");
+                    //////////////////////////////////////////////
+                    if (!stop) {
+                        // System.out.println("if(b) CPU");
                         semaCPU.acquire();
-                        setSemaphoreBlock();
                         rotInt.tratamento();
-                        // setSemaphoreBlock();
-                    } else {
-                        System.out.println("rot.tratamento(getPCB())  CPU");
-                        semaCPU.acquire();
                         setSemaphoreBlock();
+                        stop = true;
+                        //GerenteDeProcesso.esc.setSemaphoreUnblock();
+                    } else {
+                        // System.out.println("rot.tratamento(getPCB()) CPU");
+                        semaCPU.acquire();
                         rotTimer.tratamento(getPCB());
+                        setSemaphoreBlock();
                     }
+                    // setSemaphoreUnblock();
 
                 }
 
@@ -308,45 +311,68 @@ public class CPU extends Thread {
         // this.pc = pc;
     }
 
-    public void timerCPU() {
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TIMER");
-        try {
-            // semaCPU.acquire();
-            // setSemaphoreBlock();
-            limiteDeInstrucoes = 0;
-            // salvar contexto do PCB e envia para o final da fila de prontos
-            // libera para chamar outro programa
-        } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
-        }
+    // public void timerCPU() {
+    // System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TIMER");
+    // try {
+    // // semaCPU.acquire();
+    // // setSemaphoreBlock();
+    // // limiteDeInstrucoes = 0;
+    // // salvar contexto do PCB e envia para o final da fila de prontos
+    // // libera para chamar outro programa
+    // } catch (Exception e) {
+    // // TODO: handle exception
+    // e.printStackTrace();
+    // }
+    // }
+
+    public void setSemaphoreBlock() {
+        this.semaphoreBlock = true;
     }
 
-    public void setSemaphoreBlock() { this.semaphoreBlock = true; }
-
-    public void setSemaphoreUnblock() { this.semaphoreBlock = false; }
+    public void setSemaphoreUnblock() {
+        this.semaphoreBlock = false;
+    }
 
     ////////////////////////////////////////////////////////////
-    public synchronized int getPc() { return pc; }
+    public synchronized int getPc() {
+        return pc;
+    }
 
-    public synchronized void setPc(int pc) { this.pc = pc; }
-    
-    public synchronized Label[] getMemoria() { return memoria; }
+    public synchronized void setPc(int pc) {
+        this.pc = pc;
+    }
 
-    public synchronized void setMemoria(Label[] memoria) { this.memoria = memoria; }
+    public synchronized Label[] getMemoria() {
+        return memoria;
+    }
 
-    public synchronized PCB getPCB() { return pcb; }
+    public synchronized void setMemoria(Label[] memoria) {
+        this.memoria = memoria;
+    }
 
-    public synchronized void setPCB(PCB pcb) { this.pcb = pcb; }
+    public synchronized PCB getPCB() {
+        return pcb;
+    }
 
-    public synchronized double[] getRegs() { return regs; }
+    public synchronized void setPCB(PCB pcb) {
+        this.pcb = pcb;
+    }
 
-    public synchronized void setRegs(double[] regs) { this.regs = regs; }
+    public synchronized double[] getRegs() {
+        return regs;
+    }
 
-    public synchronized int getI() { return i; }
+    public synchronized void setRegs(double[] regs) {
+        this.regs = regs;
+    }
 
+    public synchronized int getI() {
+        return i;
+    }
 
-    public synchronized void desalocaMemoria(int n) { memoria[n] = null; }
+    public synchronized void desalocaMemoria(int n) {
+        memoria[n] = null;
+    }
 
     public synchronized boolean acabouArquivo(String[] arquivo, int tamanho) {
         if (arquivo.length >= tamanho) {
@@ -362,7 +388,7 @@ public class CPU extends Thread {
         int linhaArq = pcb.getLinhaArq();
         int numero = 0;
         i = limiteInf + linhaArq;
-        System.out.println("VALOR DE linha do arquivo: " + linhaArq);
+        // System.out.println("VALOR DE linha do arquivo: " + linhaArq);
         try {
             do {
 
@@ -374,8 +400,8 @@ public class CPU extends Thread {
                     regs[memoria[i].findRD()] = regs[memoria[i].findRD()] + regs[memoria[i].findRS()];
                     // System.out.println("ADD | " + " REGS: " + memoria[i].findRD() + " " +
                     // regs[memoria[i].findRD()]);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
                 }
                 //////////// intruction sub
                 else if (s[0].equals("SUB")) {
@@ -383,8 +409,8 @@ public class CPU extends Thread {
                     regs[memoria[i].findRD()] = regs[memoria[i].findRD()] - regs[memoria[i].findRS()];
                     // System.out.println("SUB | " + " REGS: " + memoria[i].findRD() + " " +
                     // regs[memoria[i].findRD()]);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 }
                 //////////// intruction mult
@@ -393,8 +419,8 @@ public class CPU extends Thread {
                     regs[memoria[i].findRD()] = regs[memoria[i].findRD()] * regs[memoria[i].findRS()];
                     // System.out.println("MULT | " + " REGS: " + memoria[i].findRD() + " " +
                     // regs[memoria[i].findRD()]);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 }
                 //////////// intruction ADDi
@@ -403,7 +429,7 @@ public class CPU extends Thread {
                     regs[memoria[i].findRD()] = regs[memoria[i].findRD()] + Double.parseDouble(s[2]);
                     // System.out.println("ADDI | " + " REGS: " + memoria[i].findRD() + " " +
                     // regs[memoria[i].findRD()]);
-                    limiteDeInstrucoes++;
+                    // limiteDeInstrucoes++;
                 }
                 //////////// intruction subi
                 else if (s[0].equals("SUBI")) {
@@ -411,8 +437,8 @@ public class CPU extends Thread {
                     regs[memoria[i].findRD()] = regs[memoria[i].findRD()] - Double.parseDouble(s[2]);
                     // System.out.println("SUBI | " + " REGS: " + memoria[i].findRD() + " " +
                     // regs[memoria[i].findRD()]);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 }
                 //////////// intruction ldi
@@ -421,8 +447,8 @@ public class CPU extends Thread {
                     regs[memoria[i].findRD()] = Double.parseDouble(s[2]);
                     // System.out.println("LDI | " + " REGS: " + memoria[i].findRD() + " " +
                     // regs[memoria[i].findRD()]);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 }
                 //////////// intruction jmp
@@ -431,8 +457,8 @@ public class CPU extends Thread {
                     linhaArq = (int) regs[memoria[i].findRD()] - 1;
                     i = Integer.parseInt(s[1]) - 1 + limiteInf;
                     // System.out.println(memoria[i].print() + " Linha: " + i);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 }
                 //////////// intruction jmpi
@@ -441,8 +467,8 @@ public class CPU extends Thread {
                     linhaArq = (int) regs[memoria[i].findRD()] - 1;
                     i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
                     // System.out.println(memoria[i].print() + " Linha: " + i);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 }
                 //////////// intruction jmpig
@@ -453,8 +479,8 @@ public class CPU extends Thread {
                         i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
                     }
                     // System.out.println(memoria[i].print() + " Linha: " + i);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 }
                 //////////// intruction jmpil
@@ -465,8 +491,8 @@ public class CPU extends Thread {
                         i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
                     }
                     // System.out.println(memoria[i].print() + " Linha: " + i);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 }
                 //////////// intruction jmpie
@@ -477,8 +503,8 @@ public class CPU extends Thread {
                         i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
                     }
                     // System.out.println(memoria[i].print() + " Linha: " + i);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 }
                 //////////// intruction std
@@ -492,9 +518,9 @@ public class CPU extends Thread {
 
                     // System.out.println(memoria[i].print() + " Linha: " + i);
 
-                   // System.out.println(memoria[i].print() + " Linha: " + i);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    System.out.println(memoria[i].print() + " Linha: " + i);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 }
                 //////////// intruction ldd
@@ -507,8 +533,8 @@ public class CPU extends Thread {
                     // System.out.println(regs[memoria[i].findRD()]);
 
                     System.out.println(regs[memoria[i].findRD()]);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 }
                 //////////// intruction stdx
@@ -520,8 +546,8 @@ public class CPU extends Thread {
                     int j = (int) regs[memoria[i].findRD()] + limiteInf;
                     memoria[j] = new Label("DADO", regs[memoria[i].findRS()]);
                     System.out.println(memoria[i].print() + " Linha: " + i);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 }
                 //////////// intruction ldx rd <- [rs]
@@ -535,8 +561,8 @@ public class CPU extends Thread {
                     // regs[memoria[i].findRD()]);
 
                     System.out.println("LDX | " + " REGS: " + memoria[i].findRD() + " " + regs[memoria[i].findRD()]);
-                    limiteDeInstrucoes++;
-                    // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
+                    // limiteDeInstrucoes++;
+                    // // // System.out.println("limiteDeInstrucoes: " + limiteDeInstrucoes);
 
                 }
                 //////////// intruction stop
@@ -568,28 +594,28 @@ public class CPU extends Thread {
 
         pcb.setLinhaArq(linhaArq);
         setPCB(pcb);
-
         return false;
         // return actived;
 
     }
 
-    public void printMemoria() {
-        System.out.println(mem.toString());
-         
-      /*  String s = "";
+    // public void printMemoria() {
+    // String s = "";
 
-        for (int i = 0; i < 300; i++) {
+    // for (int i = 0; i < 300; i++) {
 
-            if (i < 10){ s =  "00"; } 
-            else if (i < 100) { s = "0"; } 
-            else { s = ""; }
+    // if (i < 10) {
+    // s = "00";
+    // } else if (i < 100) {
+    // s = "0";
+    // } else {
+    // s = "";
+    // }
 
-            System.out.println("["+ s + i + "]" + " ");
-            if (memoria[i] != null) {
-                System.out.println("["+ s + i + "]" + " " + memoria[i]);
-            }
-        }
-        */
-    }
+    // System.out.println("[" + s + i + "]" + " ");
+    // if (memoria[i] != null) {
+    // System.out.println("[" + s + i + "]" + " " + memoria[i]);
+    // }
+    // }
+    // }
 }

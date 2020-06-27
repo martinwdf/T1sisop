@@ -30,9 +30,9 @@ public class GerenteDeProcesso {
 
         this.rot = new RotTimer(prontos, semaSch);
         this.rotInt = new RotInt(prontos, semaSch);
-        
+
         this.memoria = new Memoria();
-        this.cpu = new CPU(memoria, rot, semaCPU, rotInt);
+        this.cpu = new CPU(memoria, rot, semaCPU, rotInt, prontos);
         esc = new Escalonador(prontos, cpu, semaSch);
         this.grtMemoria = new GerenteMemoria();
     }
@@ -41,9 +41,13 @@ public class GerenteDeProcesso {
         criaProcesso(nomeArquivo, arquivo);
     }
 
-    public int getSize() { return processos.size(); }
+    public int getSize() {
+        return processos.size();
+    }
 
-    public int criaID() { return ID++; }
+    public int criaID() {
+        return ID++;
+    }
 
     public void criaProcesso(String nomeArquivo, String[] arquivo) throws InterruptedException {
         if (processos.size() == 0) {
@@ -55,25 +59,26 @@ public class GerenteDeProcesso {
             processos.add(pcb);
             prontos.addPronto(pcb);
             System.out.println("Processo adicionado na particao: " + pcb.getID());
-            //pcb.printIdPCB();
+            // pcb.printIdPCB();
         } else {
+            if (!prontos.addPronto(pcb)) {
+                System.out.println("Fila de Prontos esta cheia!");
+                do {
+                    // System.out.println("PRINT >=3");
+                    this.liberaEscalonador();
+                    System.out.println("GETSIZE " + prontos.getSize());
+                } while (prontos.getSize() == 0); 
+                System.out.println("FINAL GETSIZE " + prontos.getSize()); 
+            } else {
+                System.out.println("Processo adicionado na particao: " + pcb.getID());
+            }
             pcb = new PCB(grtMemoria.primeiroLivre(), nomeArquivo, arquivo);
             pcb.setLimiteSup(grtMemoria.alocar(pcb.getID()) - 1);
             pcb.setLimiteInf(pcb.getLimiteSup() - 127);
             processos.add(pcb);
-           if(!prontos.addPronto(pcb)){
-               System.out.println("Fila de Prontos esta cheia!");
-               while(prontos.getSize()!=0){
-                   //System.out.println("PRINT >=3");
-                   this.liberaEscalonador();
-               }
-               System.out.println("FINAL GETSIZE " + prontos.getSize());
-
-           }
-           else{
-                System.out.println("Processo adicionado na particao: " + pcb.getID());
-           }
+            prontos.addPronto(pcb);
         }
+        
     }
 
     public PCB removeProcesso() {
@@ -83,43 +88,50 @@ public class GerenteDeProcesso {
         return pcb;
     }
 
-    //nao estao mais sendo utilizadas
-    /*public PCB pcb_cpu() {
-        PCB pcb = processos.element();
-        cpu.setPc(pcb.getPC());
-        cpu.setRegs(pcb.getRegs());
-        pcb.setEstado(Estado.EXECUTADANDO);
-        return pcb;
-    }
-
-    public void cpu_pcb(PCB pcb) {
-        pcb.setLinhaArq(cpu.getI());
-        pcb.setPC(cpu.getPc());
-        pcb.setRegs(cpu.getRegs());
-        pcb.setEstado(Estado.AGUARDANDO);
-    }
-*/
+    // nao estao mais sendo utilizadas
+    /*
+     * public PCB pcb_cpu() { PCB pcb = processos.element(); cpu.setPc(pcb.getPC());
+     * cpu.setRegs(pcb.getRegs()); pcb.setEstado(Estado.EXECUTADANDO); return pcb; }
+     * 
+     * public void cpu_pcb(PCB pcb) { pcb.setLinhaArq(cpu.getI());
+     * pcb.setPC(cpu.getPc()); pcb.setRegs(cpu.getRegs());
+     * pcb.setEstado(Estado.AGUARDANDO); }
+     */
     public void liberaEscalonador() throws InterruptedException {
         if (!prontos.isEmpty()) {
 
             // System.out.println("run() GP");
-            esc.setSemaphoreUnblock();;
+            esc.setSemaphoreUnblock();
             this.semaSch.release();
             this.semaCPU.release();
-           // cpu.printMemoria();
+            // cpu.printMemoria();
+            // try {
+            //     prontos.printFilaDeProntos();
+            //     Thread.sleep(1000);
+            // } catch (Exception e) {
+            //     //TODO: handle exception
+            // }
 
         } else {
             // >>>>> NUNCA CHEGA AQUI >>>>> System.out.println("prontos.isEmpty() GP");
             this.semaSch.acquire();
             this.semaCPU.acquire();
-            //semaShell.release();  
+            
+            // semaShell.release();
             // cpu.printMemoria();
+            try {
+                Thread.sleep(1000);
+                prontos.printFilaDeProntos();
+            } catch (Exception e) {
+                //TODO: handle exception
+            }
+            
         }
     }
 
     public void interruptGP() {
 
-        try {  
+        try {
             esc.interrupt();
             cpu.interrupt();
             System.out.println("Programa finalizado.");

@@ -13,7 +13,7 @@ public class Memoria {
 
     public String toString(){
         String str ="";
-                String s = "";
+        String s = "";
 
         for (int i = 0; i < 384; i++) {
 
