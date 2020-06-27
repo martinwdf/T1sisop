@@ -6,7 +6,7 @@ import models.*;
 
 public class RotInt {
     Semaphore semaSch;
-    FilaDeProntos prontos;
+    static FilaDeProntos prontos;
     GerenteMemoria gerMem;
     Semaphore semaCPU;
 

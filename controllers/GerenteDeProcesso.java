@@ -32,7 +32,7 @@ public class GerenteDeProcesso {
         this.rotInt = new RotInt(prontos, semaSch);
 
         this.memoria = new Memoria();
-        this.cpu = new CPU(memoria, rot, semaCPU, rotInt, prontos);
+        this.cpu = new CPU(memoria, rot, semaCPU, rotInt);
         esc = new Escalonador(prontos, cpu, semaSch);
         this.grtMemoria = new GerenteMemoria();
     }
@@ -61,29 +61,30 @@ public class GerenteDeProcesso {
             System.out.println("Processo adicionado na particao: " + pcb.getID());
             // pcb.printIdPCB();
         } else {
-            if (!prontos.addPronto(pcb)) {
+            if (prontos.getSize()>=8) {
                 System.out.println("Fila de Prontos esta cheia!");
                 do {
                     // System.out.println("PRINT >=3");
                     this.liberaEscalonador();
                     System.out.println("GETSIZE " + prontos.getSize());
-                } while (prontos.getSize() == 0); 
-                System.out.println("FINAL GETSIZE " + prontos.getSize()); 
+                } while (prontos.getSize() != 0); 
             } else {
+                pcb = new PCB(grtMemoria.primeiroLivre(), nomeArquivo, arquivo);
+                pcb.setLimiteSup(grtMemoria.alocar(pcb.getID()));
+                pcb.setLimiteInf(pcb.getLimiteSup() - 127);
+                processos.add(pcb);
+                prontos.addPronto(pcb);
                 System.out.println("Processo adicionado na particao: " + pcb.getID());
+                System.out.println("Tamnaho fila de prontos " + prontos.getSize()); 
+
             }
-            pcb = new PCB(grtMemoria.primeiroLivre(), nomeArquivo, arquivo);
-            pcb.setLimiteSup(grtMemoria.alocar(pcb.getID()) - 1);
-            pcb.setLimiteInf(pcb.getLimiteSup() - 127);
-            processos.add(pcb);
-            prontos.addPronto(pcb);
         }
         
     }
 
     public PCB removeProcesso() {
         PCB pcb1 = processos.remove();
-        // prontos.removePronto();
+        prontos.removePronto();
         grtMemoria.Desaloca(pcb1.getLimiteSup());
         return pcb;
     }
@@ -101,30 +102,30 @@ public class GerenteDeProcesso {
         if (!prontos.isEmpty()) {
 
             // System.out.println("run() GP");
-            esc.setSemaphoreUnblock();
-            this.semaSch.release();
-            this.semaCPU.release();
-            // cpu.printMemoria();
-            // try {
-            //     prontos.printFilaDeProntos();
-            //     Thread.sleep(1000);
-            // } catch (Exception e) {
-            //     //TODO: handle exception
-            // }
-
-        } else {
-            // >>>>> NUNCA CHEGA AQUI >>>>> System.out.println("prontos.isEmpty() GP");
-            this.semaSch.acquire();
-            this.semaCPU.acquire();
-            
-            // semaShell.release();
             // cpu.printMemoria();
             try {
-                Thread.sleep(1000);
                 prontos.printFilaDeProntos();
+                Thread.sleep(1000);
             } catch (Exception e) {
                 //TODO: handle exception
             }
+            esc.setSemaphoreUnblock();
+            this.semaSch.release();
+            this.semaCPU.release();
+
+        } else {
+            // >>>>> NUNCA CHEGA AQUI >>>>> System.out.println("prontos.isEmpty() GP");
+            try {
+                Thread.sleep(1000);
+                //prontos.printFilaDeProntos();
+            } catch (Exception e) {
+                //TODO: handle exception
+            }
+            this.semaSch.acquire();
+            // this.semaCPU.acquire();
+            
+            // semaShell.release();
+            // cpu.printMemoria();
             
         }
     }

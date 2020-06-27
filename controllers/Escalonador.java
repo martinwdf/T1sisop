@@ -43,18 +43,18 @@ public class Escalonador extends Thread {
                     semaSch.release();
 
                     // if(!prontos.isEmpty()){
-                    try {
-                        sleep(1000);
-                        prontos.printFilaDeProntos();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    // }
-                    // System.out.println("run() Escalonador");
-                    // setSemaphoreBlock();
-                    rodaProcesso();
-                    // cpu.setSemaphoreUnblock();
-                    // semaSch.acquire();
+                        // }
+                        // System.out.println("run() Escalonador");
+                        setSemaphoreBlock();
+                        rodaProcesso();
+                        cpu.setSemaphoreUnblock();
+                        try {
+                            sleep(1000);
+                            //prontos.printFilaDeProntos();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        semaSch.acquire();
                 }
 
             } catch (InterruptedException e) {
@@ -80,7 +80,7 @@ public class Escalonador extends Thread {
         // manda a head da fila de prontos para cpu, e depois atualiza a cpu do pcb.
         // System.out.println("PRINT rodaProcesso()");
 
-        setSemaphoreBlock();
+        //cpu.setSemaphoreUnblock();
         cpu.salvaContexto(prontos.getHead());
 
         // System.out.println("rodaProcesso() Escalonador");

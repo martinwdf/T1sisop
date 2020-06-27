@@ -24,13 +24,13 @@ public class FilaDeProntos {
         return prontos.add(pcb);
     }
 
-    public boolean removePronto() {
-        if (prontos.isEmpty()) {
-            return false;
-        } else {
+    public void removePronto() {
+        // if (prontos.isEmpty()) {
+        //     return false;
+        // } else {
             prontos.remove();
-            return true;
-        }
+        //     return true;
+        // }
     }
 
     public void printFilaDeProntos() {

@@ -23,10 +23,10 @@ public class CPU extends Thread {
     private int i;
     private double[] regs;
     private Label[] memoria;
-    private FilaDeProntos prontos;
+    // private FilaDeProntos prontos;
     private Memoria memo;
 
-    public CPU(Memoria memoria, RotTimer rotTimer, Semaphore semaCPU, RotInt rotInt, FilaDeProntos prontos) {
+    public CPU(Memoria memoria, RotTimer rotTimer, Semaphore semaCPU, RotInt rotInt) {
 
         // this.timerCPU = new Timer();
         this.memoria = memoria.getMemoria();
@@ -43,7 +43,7 @@ public class CPU extends Thread {
 
         this.rotTimer = rotTimer;
         this.rotInt = rotInt;
-        this.prontos = prontos;
+        // this.prontos = prontos;
         start();
 
     }
@@ -74,201 +74,202 @@ public class CPU extends Thread {
                     int numero = 0;
                     i = limiteInf + linhaArq;
                     // System.out.println("VALOR de linha do arquivo: " + linhaArq);
+                    // try {
 
-                    do {
-                        // while (((i >= limiteInf && i < limiteSup) && numero < 400) || !b) {
-                        // if (s[0] == "TRAP") {
-                        // // rotina de tratamento de IO");
+                        do {
+
+                            s = arquivo[linhaArq].split(" ");
+                            // System.out.println(arquivo[i]);
+                            //////////// intruction ADD
+                            switch (s[0]) {
+
+                                case "ADD":
+                                    memoria[i] = new Label("ADD", s[1], s[2]);
+                                    regs[memoria[i].findRD()] = regs[memoria[i].findRD()] + regs[memoria[i].findRS()];
+                                    // System.out.println("ADD | " + " REGS: " + memoria[i].findRD() + " " +
+                                    // regs[memoria[i].findRD()]);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction sub
+                                case "SUB":
+                                    memoria[i] = new Label("SUB", s[1], s[2]);
+                                    regs[memoria[i].findRD()] = regs[memoria[i].findRD()] - regs[memoria[i].findRS()];
+                                    // System.out.println("SUB | " + " REGS: " + memoria[i].findRD() + " " +
+                                    // regs[memoria[i].findRD()]);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction mult
+                                case "MULT":
+                                    memoria[i] = new Label("MULT", s[1], s[2]);
+                                    regs[memoria[i].findRD()] = regs[memoria[i].findRD()] * regs[memoria[i].findRS()];
+                                    // System.out.println("MULT | " + " REGS: " + memoria[i].findRD() + " " +
+                                    // regs[memoria[i].findRD()]);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction ADDi
+                                case "ADDI":
+                                    memoria[i] = new Label("ADDI", s[1], Double.parseDouble(s[2]));
+                                    regs[memoria[i].findRD()] = regs[memoria[i].findRD()] + Double.parseDouble(s[2]);
+                                    // System.out.println("ADDI | " + " REGS: " + memoria[i].findRD() + " " +
+                                    // regs[memoria[i].findRD()]);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction subi
+                                case "SUBI":
+                                    memoria[i] = new Label("SUBI", s[1], Double.parseDouble(s[2]));
+                                    regs[memoria[i].findRD()] = regs[memoria[i].findRD()] - Double.parseDouble(s[2]);
+                                    // System.out.println("SUBI | " + " REGS: " + memoria[i].findRD() + " " +
+                                    // regs[memoria[i].findRD()]);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction ldi
+                                case "LDI":
+                                    memoria[i] = new Label("LDI", s[1], Double.parseDouble(s[2]));
+                                    regs[memoria[i].findRD()] = Double.parseDouble(s[2]);
+                                    // System.out.println("LDI | " + " REGS: " + memoria[i].findRD() + " " +
+                                    // regs[memoria[i].findRD()]);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction jmp
+                                case "JMP":
+                                    memoria[i] = new Label("JMP", Double.parseDouble(s[1]));
+                                    linhaArq = (int) regs[memoria[i].findRD()] - 1;
+                                    i = Integer.parseInt(s[1]) - 1 + limiteInf;
+                                    // System.out.println(memoria[i].print() + " Linha: " + i);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction jmpi
+                                case "JMPI":
+                                    memoria[i] = new Label("JMPI", s[1], 0.0);
+                                    linhaArq = (int) regs[memoria[i].findRD()] - 1;
+                                    i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
+                                    // System.out.println(memoria[i].print() + " Linha: " + i);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction jmpig
+                                case "JMPIG":
+                                    memoria[i] = new Label("JMPIG", s[1], s[2]);
+                                    if (regs[memoria[i].findRS()] > 0) {
+                                        linhaArq = (int) regs[memoria[i].findRD()] - 1;
+                                        i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
+                                    }
+                                    // System.out.println(memoria[i].print() + " Linha: " + i);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction jmpil
+                                case "JMPIL":
+                                    memoria[i] = new Label("JMPIL", s[1], s[2]);
+                                    if (regs[memoria[i].findRS()] < 0) {
+                                        linhaArq = (int) regs[memoria[i].findRD()] - 1;
+                                        i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
+                                    }
+                                    // System.out.println(memoria[i].print() + " Linha: " + i);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction jmpie
+                                case "JMPIE":
+                                    memoria[i] = new Label("JMPIE", s[1], s[2]);
+                                    if (regs[memoria[i].findRS()] == 0) {
+                                        linhaArq = (int) regs[memoria[i].findRD()] - 1;
+                                        i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
+                                    }
+                                    // System.out.println(memoria[i].print() + " Linha: " + i);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction std
+                                case "STD":
+                                    s[1] = s[1].replace("[", "");
+                                    s[1] = s[1].replace("]", "");
+                                    s[1] = s[1].replace(",", "");
+                                    int j = Integer.parseInt(s[1]) + limiteInf;
+                                    memoria[i] = new Label("STD", s[1], s[2]);
+                                    memoria[j] = new Label("DADO", regs[memoria[i].findRS()]);
+
+                                    // System.out.println(memoria[i].print() + " Linha: " + i);
+
+                                    // System.out.println(memoria[i].print() + " Linha: " + i);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction ldd
+                                case "LDD":
+                                    s[2] = s[2].replace("[", "");
+                                    s[2] = s[2].replace("]", "");
+                                    memoria[i] = new Label("LDD", s[1], s[2]);
+                                    regs[memoria[i].findRD()] = memoria[Integer.parseInt(s[2]) + limiteInf]
+                                            .getParametro();
+
+                                    // System.out.println(regs[memoria[i].findRD()]);
+
+                                    // System.out.println(regs[memoria[i].findRD()]);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction stdx
+                                case "STX":
+                                    s[1] = s[1].replace("[", "");
+                                    s[1] = s[1].replace("]", "");
+                                    s[1] = s[1].replace(",", "");
+                                    memoria[i] = new Label("STX", s[1], s[2]);
+                                    int l = (int) regs[memoria[i].findRD()] + limiteInf;
+                                    memoria[l] = new Label("DADO", regs[memoria[i].findRS()]);
+                                    // System.out.println(memoria[i].print() + " Linha: " + i);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction ldx rd <- [rs]
+                                case "LDX":
+                                    s[2] = s[2].replace("[", "");
+                                    s[2] = s[2].replace("]", "");
+                                    memoria[i] = new Label("LDX", s[1], s[2]);
+                                    int k = (int) regs[memoria[i].findRS()] + limiteInf;
+                                    regs[memoria[i].findRD()] = memoria[k].getParametro();
+                                    // System.out.println("LDX | " + " REGS: " + memoria[i].findRD() + " " +
+                                    // regs[memoria[i].findRD()]);
+
+                                    // System.out.println("LDX | " + " REGS: " + memoria[i].findRD() + " " +
+                                    // regs[memoria[i].findRD()]);
+                                    // limiteDeInstrucoes++;
+                                    break;
+
+                                //////////// intruction stop
+                                case "STOP":
+                                    System.out.println("STOP");
+                                    setSemaphoreBlock();
+                                    semaCPU.acquire();
+                                    stop = false;
+                                    break;
+
+                                default:
+                                    throw new IllegalArgumentException(
+                                            "Não foi possível encontrar o VALOR de linha do arquivo: " + linhaArq);
+                            }
+
+                            i++;
+                            numero++;
+                            linhaArq++;
+                            setPc(linhaArq);
+
+                        } while (stop && (i >= limiteInf && i < limiteSup) && numero < 400);
                         // }
+                        i -= limiteInf;
 
-                        // if (timerCPU.contaTempo(limiteDeInstrucoes)) {
-                        // timerCPU();
-                        // }
-
-                        s = arquivo[linhaArq].split(" ");
-                        // System.out.println(arquivo[i]);
-                        //////////// intruction ADD
-                        switch (s[0]) {
-
-                            case "ADD":
-                                memoria[i] = new Label("ADD", s[1], s[2]);
-                                regs[memoria[i].findRD()] = regs[memoria[i].findRD()] + regs[memoria[i].findRS()];
-                                // System.out.println("ADD | " + " REGS: " + memoria[i].findRD() + " " +
-                                // regs[memoria[i].findRD()]);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction sub
-                            case "SUB":
-                                memoria[i] = new Label("SUB", s[1], s[2]);
-                                regs[memoria[i].findRD()] = regs[memoria[i].findRD()] - regs[memoria[i].findRS()];
-                                // System.out.println("SUB | " + " REGS: " + memoria[i].findRD() + " " +
-                                // regs[memoria[i].findRD()]);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction mult
-                            case "MULT":
-                                memoria[i] = new Label("MULT", s[1], s[2]);
-                                regs[memoria[i].findRD()] = regs[memoria[i].findRD()] * regs[memoria[i].findRS()];
-                                // System.out.println("MULT | " + " REGS: " + memoria[i].findRD() + " " +
-                                // regs[memoria[i].findRD()]);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction ADDi
-                            case "ADDI":
-                                memoria[i] = new Label("ADDI", s[1], Double.parseDouble(s[2]));
-                                regs[memoria[i].findRD()] = regs[memoria[i].findRD()] + Double.parseDouble(s[2]);
-                                // System.out.println("ADDI | " + " REGS: " + memoria[i].findRD() + " " +
-                                // regs[memoria[i].findRD()]);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction subi
-                            case "SUBI":
-                                memoria[i] = new Label("SUBI", s[1], Double.parseDouble(s[2]));
-                                regs[memoria[i].findRD()] = regs[memoria[i].findRD()] - Double.parseDouble(s[2]);
-                                // System.out.println("SUBI | " + " REGS: " + memoria[i].findRD() + " " +
-                                // regs[memoria[i].findRD()]);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction ldi
-                            case "LDI":
-                                memoria[i] = new Label("LDI", s[1], Double.parseDouble(s[2]));
-                                regs[memoria[i].findRD()] = Double.parseDouble(s[2]);
-                                // System.out.println("LDI | " + " REGS: " + memoria[i].findRD() + " " +
-                                // regs[memoria[i].findRD()]);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction jmp
-                            case "JMP":
-                                memoria[i] = new Label("JMP", Double.parseDouble(s[1]));
-                                linhaArq = (int) regs[memoria[i].findRD()] - 1;
-                                i = Integer.parseInt(s[1]) - 1 + limiteInf;
-                                // System.out.println(memoria[i].print() + " Linha: " + i);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction jmpi
-                            case "JMPI":
-                                memoria[i] = new Label("JMPI", s[1], 0.0);
-                                linhaArq = (int) regs[memoria[i].findRD()] - 1;
-                                i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
-                                // System.out.println(memoria[i].print() + " Linha: " + i);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction jmpig
-                            case "JMPIG":
-                                memoria[i] = new Label("JMPIG", s[1], s[2]);
-                                if (regs[memoria[i].findRS()] > 0) {
-                                    linhaArq = (int) regs[memoria[i].findRD()] - 1;
-                                    i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
-                                }
-                                // System.out.println(memoria[i].print() + " Linha: " + i);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction jmpil
-                            case "JMPIL":
-                                memoria[i] = new Label("JMPIL", s[1], s[2]);
-                                if (regs[memoria[i].findRS()] < 0) {
-                                    linhaArq = (int) regs[memoria[i].findRD()] - 1;
-                                    i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
-                                }
-                                // System.out.println(memoria[i].print() + " Linha: " + i);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction jmpie
-                            case "JMPIE":
-                                memoria[i] = new Label("JMPIE", s[1], s[2]);
-                                if (regs[memoria[i].findRS()] == 0) {
-                                    linhaArq = (int) regs[memoria[i].findRD()] - 1;
-                                    i = (int) regs[memoria[i].findRD()] - 1 + limiteInf;
-                                }
-                                // System.out.println(memoria[i].print() + " Linha: " + i);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction std
-                            case "STD":
-                                s[1] = s[1].replace("[", "");
-                                s[1] = s[1].replace("]", "");
-                                s[1] = s[1].replace(",", "");
-                                int j = Integer.parseInt(s[1]) + limiteInf;
-                                memoria[i] = new Label("STD", s[1], s[2]);
-                                memoria[j] = new Label("DADO", regs[memoria[i].findRS()]);
-
-                                // System.out.println(memoria[i].print() + " Linha: " + i);
-
-                                // System.out.println(memoria[i].print() + " Linha: " + i);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction ldd
-                            case "LDD":
-                                s[2] = s[2].replace("[", "");
-                                s[2] = s[2].replace("]", "");
-                                memoria[i] = new Label("LDD", s[1], s[2]);
-                                regs[memoria[i].findRD()] = memoria[Integer.parseInt(s[2]) + limiteInf].getParametro();
-
-                                // System.out.println(regs[memoria[i].findRD()]);
-
-                                // System.out.println(regs[memoria[i].findRD()]);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction stdx
-                            case "STX":
-                                s[1] = s[1].replace("[", "");
-                                s[1] = s[1].replace("]", "");
-                                s[1] = s[1].replace(",", "");
-                                memoria[i] = new Label("STX", s[1], s[2]);
-                                int l = (int) regs[memoria[i].findRD()] + limiteInf;
-                                memoria[l] = new Label("DADO", regs[memoria[i].findRS()]);
-                                // System.out.println(memoria[i].print() + " Linha: " + i);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction ldx rd <- [rs]
-                            case "LDX":
-                                s[2] = s[2].replace("[", "");
-                                s[2] = s[2].replace("]", "");
-                                memoria[i] = new Label("LDX", s[1], s[2]);
-                                int k = (int) regs[memoria[i].findRS()] + limiteInf;
-                                regs[memoria[i].findRD()] = memoria[k].getParametro();
-                                // System.out.println("LDX | " + " REGS: " + memoria[i].findRD() + " " +
-                                // regs[memoria[i].findRD()]);
-
-                                // System.out.println("LDX | " + " REGS: " + memoria[i].findRD() + " " +
-                                // regs[memoria[i].findRD()]);
-                                // limiteDeInstrucoes++;
-                                break;
-
-                            //////////// intruction stop
-                            case "STOP":
-                                System.out.println("STOP");
-                                stop = false;
-                                // numero = 1000;
-                                break;
-
-                            default:
-                                throw new IllegalArgumentException(
-                                        "Não foi possível encontrar o VALOR de linha do arquivo: " + linhaArq);
-                        }
-
-                        i++;
-                        numero++;
-                        linhaArq++;
-                        setPc(linhaArq);
-
-                    } while (stop && (i >= limiteInf && i < limiteSup) && numero < 400 );
+                    // } catch (Exception e) {
+                    //     // TODO: handle exception
+                    //     System.out.println("--------------->>>>>>>>>>>>>>>>>>>>>>>>");
+                    //     e.printStackTrace();
                     // }
-                    i -= limiteInf;
 
                     pcb.setLinhaArq(linhaArq);
                     setPCB(pcb);
@@ -276,20 +277,28 @@ public class CPU extends Thread {
                     //////////////////////////////////////////////
                     if (!stop) {
                         // System.out.println("if(b) CPU");
-                        semaCPU.acquire();
                         rotInt.tratamento();
+                        semaCPU.acquire();
                         setSemaphoreBlock();
                         stop = true;
-                        //GerenteDeProcesso.esc.setSemaphoreUnblock();
+                        // GerenteDeProcesso.esc.setSemaphoreUnblock();
                     } else {
                         // System.out.println("rot.tratamento(getPCB()) CPU");
+                        setSemaphoreBlock();
                         semaCPU.acquire();
                         rotTimer.tratamento(getPCB());
-                        setSemaphoreBlock();
                     }
                     // setSemaphoreUnblock();
 
                 }
+                // while (((i >= limiteInf && i < limiteSup) && numero < 400) || !b) {
+                // if (s[0] == "TRAP") {
+                // // rotina de tratamento de IO");
+                // }
+
+                // if (timerCPU.contaTempo(limiteDeInstrucoes)) {
+                // timerCPU();
+                // }
 
             } catch (InterruptedException e) {
                 // TODO: handle exception
@@ -302,8 +311,8 @@ public class CPU extends Thread {
 
     public synchronized void salvaContexto(PCB pcb) {
         // System.out.println("salvaContexto(PCB pcb)");
-        setRegs(pcb.getRegs());
-        setPc(pcb.getPC());
+        // setRegs(pcb.getRegs());
+        // setPc(pcb.getPC());
         setPCB(pcb);
         setSemaphoreUnblock();
         // this.pcb = pcb;
@@ -327,9 +336,11 @@ public class CPU extends Thread {
 
     public void setSemaphoreBlock() {
         this.semaphoreBlock = true;
+        //semaCPU.acquire();
     }
 
     public void setSemaphoreUnblock() {
+        // semaCPU.release();
         this.semaphoreBlock = false;
     }
 
@@ -576,7 +587,7 @@ public class CPU extends Thread {
                 linhaArq++;
                 setPc(linhaArq);
 
-            } while ((i >= limiteInf && i < limiteSup) && numero < 15);
+            } while ((i >= limiteInf && i < limiteSup) && numero < 400);
             i -= limiteInf;
         } catch (ArithmeticException a) {
             System.out.println("no rodaProg() DivZero = 1");
